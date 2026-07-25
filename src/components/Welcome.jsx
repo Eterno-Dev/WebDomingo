@@ -47,40 +47,21 @@ function Welcome({ onSelectGender }) {
             type="text" 
             placeholder="Escribe tu nombre..." 
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value.toUpperCase())}
             style={{ width: '100%', padding: '15px', fontSize: '1.2rem', textAlign: 'center', border: '2px solid #ccc', borderRadius: '4px', marginBottom: '20px', fontWeight: 'bold' }}
           />
           <button 
             disabled={!name.trim()}
-            onClick={() => setStep(3)} 
+            onClick={() => {
+              const colors = ['cuni1', 'cuni2', 'cuni3', 'cuni4'];
+              const randomColor = colors[Math.floor(Math.random() * colors.length)];
+              handleGenderSelect(randomColor);
+            }} 
             style={{ width: '100%', padding: '15px', fontSize: '1.2rem', fontWeight: 'bold', background: name.trim() ? '#e21b3c' : '#ccc', color: '#fff', border: 'none', borderRadius: '4px', cursor: name.trim() ? 'pointer' : 'not-allowed', boxShadow: name.trim() ? '0 4px 0 #b0102b' : 'none' }}
           >
             Siguiente
           </button>
         </div>
-      )}
-
-      {/* Color Selection (Step 3) */}
-      {step === 3 && (
-        <>
-          <p style={{ textAlign: 'center', marginBottom: '2rem', fontSize: '1.5rem', fontWeight: 'bold' }}>
-            Hola, {name}. ¡Elige tu color!
-          </p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '15px', width: '100%', maxWidth: '400px' }}>
-            <div onClick={() => handleGenderSelect('cuni1')} style={{ background: '#e21b3c', height: '150px', borderRadius: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', boxShadow: '0 4px 0 #b0102b', transition: 'transform 0.1s' }}>
-              <strong style={{ fontSize: '1.5rem' }}>Perfil 1</strong>
-            </div>
-            <div onClick={() => handleGenderSelect('cuni2')} style={{ background: '#1368ce', height: '150px', borderRadius: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', boxShadow: '0 4px 0 #0d4a99', transition: 'transform 0.1s' }}>
-              <strong style={{ fontSize: '1.5rem' }}>Perfil 2</strong>
-            </div>
-            <div onClick={() => handleGenderSelect('cuni3')} style={{ background: '#d89e00', height: '150px', borderRadius: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', boxShadow: '0 4px 0 #b38200', transition: 'transform 0.1s' }}>
-              <strong style={{ fontSize: '1.5rem' }}>Perfil 3</strong>
-            </div>
-            <div onClick={() => handleGenderSelect('cuni4')} style={{ background: '#26890c', height: '150px', borderRadius: '8px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', cursor: 'pointer', boxShadow: '0 4px 0 #1f7309', transition: 'transform 0.1s' }}>
-              <strong style={{ fontSize: '1.5rem' }}>Perfil 4</strong>
-            </div>
-          </div>
-        </>
       )}
     </div>
   );
