@@ -181,7 +181,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const missions = myData.missions || [];
   const curses = myData.curses || [];
   const globalEvent = gameState.globalEvent;
-  const allPlayers = Object.entries(gameState.players).filter(([id, data]) => data.name);
+  const allPlayers = Object.entries(gameState.players);
 
   const activeIndex = Math.min(Math.max(0, currentMissionIndex), Math.max(0, missions.length - 1));
   const activeMission = missions[activeIndex];
@@ -216,7 +216,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         {allPlayers.map(([id, pData]) => (
           <div key={id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px', background: '#fafafa', color: '#333', padding: '8px 12px', borderRadius: '4px', borderBottom: `4px solid ${id === gender ? playerColor : '#ddd'}`, flexShrink: 0 }}>
             <span style={{ fontSize: '1rem', fontWeight: '900', color: getPlayerColor(id), textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '100px' }}>
-              {pData.name || id}
+              {pData.name || 'Esperando...'}
             </span>
             <div style={{ display: 'flex', gap: '8px', fontSize: '0.9rem', fontWeight: 'bold' }}>
               <span>🪙 {pData.scores?.monedas || 0}</span>

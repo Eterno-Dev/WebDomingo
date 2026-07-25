@@ -21,9 +21,9 @@ function Welcome({ onSelectGender }) {
       {step === 1 && (
         <div className="modal-overlay">
           <div className="modal-content" style={{ background: '#fff', color: '#333', border: 'none', borderRadius: '8px' }}>
-            <h3 style={{ fontFamily: "'Schoolbell', cursive", color: '#e21b3c', fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
+            <h3 style={{ fontFamily: "'Fredoka', sans-serif", color: '#e21b3c', fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
             <div style={{ margin: '1.5rem 0', textAlign: 'center' }}>
-              <p style={{ fontSize: '1.4rem', color: '#1368ce', fontWeight: 'bold' }}>
+              <p style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold' }}>
                 Realiza los retos y recibe castigos o premios.
               </p>
             </div>
