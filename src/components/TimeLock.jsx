@@ -51,7 +51,7 @@ function TimeLock({ onUnlock }) {
     <div className="screen-container" style={{ background: '#46178f', color: '#fff' }}>
       <div style={{ textAlign: 'center', background: '#fff', color: '#333', padding: '40px', borderRadius: '8px', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', maxWidth: '400px', width: '100%' }}>
         <span style={{ fontSize: '4rem', display: 'block', marginBottom: '20px', cursor: 'pointer' }} onClick={handleSecretUnlock} title="Click me 5 times to bypass">⏳</span>
-        <h1 style={{ fontSize: '2rem', fontWeight: '900', color: '#e21b3c', marginBottom: '10px' }}>¡LA FIESTA AÚN NO HA EMPEZADO!</h1>
+        <h1 style={{ fontFamily: "'Schoolbell', cursive", fontSize: '2.5rem', fontWeight: '900', color: '#e21b3c', marginBottom: '10px' }}>¡LA FIESTA AÚN NO HA EMPEZADO!</h1>
         <p style={{ fontSize: '1.2rem', marginBottom: '30px', fontWeight: 'bold' }}>
           La página está bloqueada.<br/>
           Se abrirá automáticamente en:

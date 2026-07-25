@@ -181,7 +181,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const missions = myData.missions || [];
   const curses = myData.curses || [];
   const globalEvent = gameState.globalEvent;
-  const allPlayers = Object.entries(gameState.players).filter(([id, data]) => data.name || data.scores.monedas > 0 || data.missions?.length > 0);
+  const allPlayers = Object.entries(gameState.players).filter(([id, data]) => data.name);
 
   const activeIndex = Math.min(Math.max(0, currentMissionIndex), Math.max(0, missions.length - 1));
   const activeMission = missions[activeIndex];

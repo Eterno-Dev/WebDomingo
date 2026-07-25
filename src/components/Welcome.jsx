@@ -21,15 +21,10 @@ function Welcome({ onSelectGender }) {
       {step === 1 && (
         <div className="modal-overlay">
           <div className="modal-content" style={{ background: '#fff', color: '#333', border: 'none', borderRadius: '8px' }}>
-            <h3 style={{ fontFamily: "'Fredoka', sans-serif", color: '#e21b3c', fontSize: '1.8rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
-            <div style={{ margin: '1.5rem 0', textAlign: 'left' }}>
-              <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>
-                <strong style={{ color: '#1368ce', display: 'block' }}>1. ACTITUD</strong>
-                Queda totalmente prohibido el aburrimiento. El que pierda un reto, PAGA.
-              </p>
-              <p style={{ fontSize: '1.1rem' }}>
-                <strong style={{ color: '#26890c', display: 'block' }}>2. COMPAÑERISMO</strong>
-                Todo lo que pasa en Los Cuñis, se queda en Los Cuñis.
+            <h3 style={{ fontFamily: "'Schoolbell', cursive", color: '#e21b3c', fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
+            <div style={{ margin: '1.5rem 0', textAlign: 'center' }}>
+              <p style={{ fontSize: '1.4rem', color: '#1368ce', fontWeight: 'bold' }}>
+                Realiza los retos y recibe castigos o premios.
               </p>
             </div>
             <button className="btn btn-primary" onClick={() => setStep(2)} style={{ width: '100%', padding: '15px', fontFamily: "'Fredoka', sans-serif", fontSize: '1.2rem' }}>

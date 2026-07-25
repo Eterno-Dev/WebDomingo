@@ -27,7 +27,7 @@ function Login({ onLogin }) {
 
   return (
     <div className="screen-container" style={{ background: '#46178f', fontFamily: "'Inter', sans-serif" }}>
-      <h1 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '4.5rem', color: '#fff', fontWeight: '900', marginBottom: '2rem', textAlign: 'center', textShadow: '2px 4px 10px rgba(0,0,0,0.3)', padding: '0 20px' }}>
+      <h1 style={{ fontFamily: "'Schoolbell', cursive", fontSize: '4.5rem', color: '#fff', fontWeight: '900', marginBottom: '2rem', textAlign: 'center', textShadow: '2px 4px 10px rgba(0,0,0,0.3)', padding: '0 20px' }}>
         🎉 Los Cuñis! 🥂
       </h1>
       <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '30px', borderRadius: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '350px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}>
