@@ -1,14 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import confetti from 'canvas-confetti';
 
 function Login({ onLogin }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    // Launch a bit of confetti on load
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (password === 'PARTY') {
+    if (password.toUpperCase() === 'PARTY') {
       onLogin(false);
-    } else if (password === 'PARTY_DEBUG') {
+    } else if (password.toUpperCase() === 'PARTY_DEBUG') {
       onLogin(true);
     } else {
       setError('Contraseña incorrecta');
@@ -16,20 +26,20 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="screen-container" style={{ background: '#46178f' }}>
-      <h1 style={{ fontSize: '4rem', color: '#fff', fontWeight: '900', marginBottom: '2rem', letterSpacing: '-2px' }}>
-        LOS CUÑIS!
+    <div className="screen-container" style={{ background: '#46178f', fontFamily: "'Inter', sans-serif" }}>
+      <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: '4.5rem', color: '#fff', fontWeight: '900', marginBottom: '2rem', textAlign: 'center', textShadow: '2px 4px 10px rgba(0,0,0,0.3)', padding: '0 20px' }}>
+        🎉 Los Cuñis! 🥂
       </h1>
       <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '30px', borderRadius: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '350px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}>
         <input 
           type="password" 
-          placeholder="Game PIN" 
+          placeholder="Contraseña" 
           value={password}
           onChange={(e) => { setPassword(e.target.value); setError(''); }}
           style={{ width: '100%', padding: '15px', fontSize: '1.2rem', textAlign: 'center', border: '2px solid #ccc', borderRadius: '4px', marginBottom: '15px', fontWeight: 'bold' }}
         />
-        <button type="submit" style={{ width: '100%', padding: '15px', fontSize: '1.2rem', fontWeight: 'bold', background: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', boxShadow: '0 4px 0 #111' }}>
-          Enter
+        <button type="submit" style={{ width: '100%', padding: '15px', fontSize: '1.2rem', fontWeight: '900', background: '#333', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', boxShadow: '0 4px 0 #111' }}>
+          Entrar
         </button>
         {error && <div style={{ color: '#e21b3c', marginTop: '15px', fontWeight: 'bold' }}>{error}</div>}
       </form>

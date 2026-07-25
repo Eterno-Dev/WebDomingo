@@ -46,10 +46,10 @@ function App() {
 
   return (
     <>
-      {!isTimeUnlocked && <TimeLock onUnlock={handleUnlock} />}
-      {isTimeUnlocked && !isLoggedIn && <Login onLogin={handleLogin} />}
-      {isLoggedIn && !gender && <Welcome onSelectGender={handleGenderSelect} />}
-      {isLoggedIn && gender && <PhaseManager gender={gender} playerName={playerName} isDebugMode={isDebugMode} />}
+      {!isLoggedIn && <Login onLogin={handleLogin} />}
+      {isLoggedIn && !isTimeUnlocked && <TimeLock onUnlock={handleUnlock} />}
+      {isLoggedIn && isTimeUnlocked && !gender && <Welcome onSelectGender={handleGenderSelect} />}
+      {isLoggedIn && isTimeUnlocked && gender && <PhaseManager gender={gender} playerName={playerName} isDebugMode={isDebugMode} />}
 
       {/* Debug Reset Button */}
       {isDebugMode && (
