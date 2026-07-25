@@ -12,16 +12,16 @@ function Welcome({ onSelectGender }) {
   };
 
   return (
-    <div className="screen-container" style={{ background: '#46178f', color: '#fff' }}>
-      <h2 style={{ fontSize: '3rem', marginBottom: '1rem', textAlign: 'center', fontWeight: '900' }}>
-        LOS CUÑIS
+    <div className="screen-container" style={{ background: '#46178f', color: '#fff', fontFamily: "'Inter', sans-serif" }}>
+      <h2 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '3.5rem', marginBottom: '1rem', textAlign: 'center', fontWeight: '900', textShadow: '2px 4px 10px rgba(0,0,0,0.3)' }}>
+        🎉 Los Cuñis! 🥂
       </h2>
 
       {/* Warning Modal (Step 1) */}
       {step === 1 && (
         <div className="modal-overlay">
           <div className="modal-content" style={{ background: '#fff', color: '#333', border: 'none', borderRadius: '8px' }}>
-            <h3 style={{ color: '#e21b3c', fontSize: '1.5rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
+            <h3 style={{ fontFamily: "'Fredoka', sans-serif", color: '#e21b3c', fontSize: '1.8rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
             <div style={{ margin: '1.5rem 0', textAlign: 'left' }}>
               <p style={{ fontSize: '1.1rem', marginBottom: '1rem' }}>
                 <strong style={{ color: '#1368ce', display: 'block' }}>1. ACTITUD</strong>
@@ -32,7 +32,7 @@ function Welcome({ onSelectGender }) {
                 Todo lo que pasa en Los Cuñis, se queda en Los Cuñis.
               </p>
             </div>
-            <button className="btn btn-primary" onClick={() => setStep(2)} style={{ width: '100%', padding: '15px' }}>
+            <button className="btn btn-primary" onClick={() => setStep(2)} style={{ width: '100%', padding: '15px', fontFamily: "'Fredoka', sans-serif", fontSize: '1.2rem' }}>
               ¡A JUGAR!
             </button>
           </div>
@@ -42,7 +42,7 @@ function Welcome({ onSelectGender }) {
       {/* Name Input (Step 2) */}
       {step === 2 && (
         <div style={{ width: '100%', maxWidth: '350px', background: '#fff', padding: '30px', borderRadius: '8px', color: '#333', textAlign: 'center', boxShadow: '0 8px 20px rgba(0,0,0,0.3)' }}>
-          <h3 style={{ fontSize: '1.8rem', fontWeight: '900', marginBottom: '20px' }}>¿Cómo te llamas?</h3>
+          <h3 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '2rem', fontWeight: '900', marginBottom: '20px' }}>¿Cómo te llamas?</h3>
           <input 
             type="text" 
             placeholder="Escribe tu nombre..." 
