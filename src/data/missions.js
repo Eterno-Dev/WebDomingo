@@ -48,7 +48,7 @@ export const storeActions = [
   { id: 'a2', text: 'Saltarte una penalización activa.', price: 40, type: 'skip_penalty', emoji: '🛡️' },
   { id: 'a3', text: 'Ver la mano de misiones de otro.', price: 50, type: 'spy_missions', emoji: '👀' },
   { id: 'a4', text: 'Robar 10 monedas a otro.', price: 60, type: 'steal_coins', emoji: '🥷' },
-  { id: 'a5', text: 'Bloquear la próxima compra de otro.', price: 70, type: 'block_store', emoji: '🚫' },
+  { id: 'a5', text: 'Comprar una misión extra (máx 4).', price: 70, type: 'buy_mission', emoji: '🃏' },
   { id: 'a6', text: 'Duplicar recompensa de tu misión.', price: 80, type: 'double_reward', emoji: 'x2' },
 ];
 

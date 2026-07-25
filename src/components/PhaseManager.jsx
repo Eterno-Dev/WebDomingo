@@ -150,6 +150,15 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         saveActiveCurses(gender, newCurses);
       } else if (action.type === 'change_mission') {
         replaceCurrentMission();
+      } else if (action.type === 'buy_mission') {
+        const currentMissions = [...(myData.missions || [])];
+        if (currentMissions.length >= 4) {
+          alert('¡Ya tienes el máximo de 4 misiones!');
+          return;
+        }
+        const newMission = getMultipleRandomMissions(1, currentMissions)[0];
+        currentMissions.push(newMission);
+        saveActiveMissions(gender, currentMissions);
       }
       
       saveGameState(gender, {
@@ -200,16 +209,16 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#46178f', color: '#fff', fontFamily: "'Inter', sans-serif", position: 'relative' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#f5f7fa', color: '#333', fontFamily: "'Inter', sans-serif", position: 'relative' }}>
       
       {/* GLOBAL HEADER (Flat Kahoot Style) */}
-      <div style={{ padding: '10px', background: '#333', display: 'flex', gap: '10px', overflowX: 'auto', whiteSpace: 'nowrap', alignItems: 'center' }}>
+      <div style={{ padding: '10px', background: '#fff', borderBottom: '2px solid #eaeaea', display: 'flex', gap: '10px', overflowX: 'auto', whiteSpace: 'nowrap', alignItems: 'center' }}>
         {allPlayers.map(([id, pData]) => (
-          <div key={id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#fff', color: '#333', padding: '10px 15px', borderRadius: '4px', borderBottom: `4px solid ${id === gender ? playerColor : '#ddd'}`, minWidth: '80px', flexShrink: 0 }}>
+          <div key={id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '10px', background: '#fafafa', color: '#333', padding: '8px 12px', borderRadius: '4px', borderBottom: `4px solid ${id === gender ? playerColor : '#ddd'}`, flexShrink: 0 }}>
             <span style={{ fontSize: '1rem', fontWeight: '900', color: getPlayerColor(id), textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '100px' }}>
               {pData.name || id}
             </span>
-            <div style={{ display: 'flex', gap: '10px', fontSize: '0.9rem', marginTop: '5px', fontWeight: 'bold' }}>
+            <div style={{ display: 'flex', gap: '8px', fontSize: '0.9rem', fontWeight: 'bold' }}>
               <span>🪙 {pData.scores?.monedas || 0}</span>
               {(pData.curses && pData.curses.length > 0) && <span style={{ color: '#e21b3c' }}>❌ {pData.curses.length}</span>}
             </div>
@@ -218,18 +227,23 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
       </div>
 
       {/* MY STATUS BAR */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: '#222' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: '#fff', borderBottom: '2px solid #eaeaea' }}>
         <div style={{ fontWeight: '900', fontSize: '1.2rem', textTransform: 'uppercase' }}>HOLA, <span style={{ color: playerColor }}>{playerName}</span></div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           
-          <div onClick={() => setShowCurses(true)} style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', background: curses.length > 0 ? '#e21b3c' : '#555', padding: '5px 10px', borderRadius: '4px' }}>
+          <div onClick={() => setShowCurses(true)} style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', background: curses.length > 0 ? '#e21b3c' : '#eee', color: curses.length > 0 ? '#fff' : '#333', padding: '5px 10px', borderRadius: '4px' }}>
             <span style={{ fontSize: '1.2rem' }}>❌</span>
             <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{curses.length}</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#555', padding: '5px 10px', borderRadius: '4px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#eee', padding: '5px 10px', borderRadius: '4px' }}>
             <span style={{ fontSize: '1.2rem' }}>🪙</span>
             <span style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{myData.scores.monedas || 0}</span>
+          </div>
+          
+          {/* TIENDA ICON */}
+          <div onClick={() => setShowStore(true)} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', background: '#d89e00', color: '#fff', padding: '5px 10px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem' }}>
+            🛒
           </div>
         </div>
       </div>
@@ -244,7 +258,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
             
             {/* Card Container */}
             <div style={{ flex: 1, perspective: '1000px' }}>
-              <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '1rem', fontWeight: 'bold', color: '#fff', textTransform: 'uppercase' }}>
+              <div style={{ textAlign: 'center', marginBottom: '10px', fontSize: '1rem', fontWeight: 'bold', color: '#333', textTransform: 'uppercase' }}>
                 Misión {activeIndex + 1} de {missions.length}
               </div>
 
@@ -252,7 +266,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
               <div style={{ width: '100%', height: '350px', position: 'relative', transition: 'transform 0.4s', transformStyle: 'preserve-3d', transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)' }}>
                 
                 {/* Front of Card */}
-                <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', background: '#fff', color: '#333', borderRadius: '4px', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', background: '#fff', color: '#333', borderRadius: '20px', border: '1px solid #ddd', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                   <div style={{ background: playerColor, padding: '15px', color: '#fff', textAlign: 'center', fontWeight: '900', fontSize: '1.2rem' }}>
                     MISIÓN SECRETA
                   </div>
@@ -267,12 +281,12 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                     onClick={() => setIsFlipped(true)}
                     style={{ background: '#eee', padding: '15px', textAlign: 'center', cursor: 'pointer', color: '#333', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
                   >
-                    <span>Ver Riesgo (Castigo)</span> <span style={{ fontSize: '1.2rem' }}>↪️</span>
+                    <span>Ver castigo ▼</span>
                   </div>
                 </div>
 
                 {/* Back of Card (Risk) */}
-                <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', background: '#333', color: '#fff', borderRadius: '4px', transform: 'rotateY(180deg)', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ position: 'absolute', width: '100%', height: '100%', backfaceVisibility: 'hidden', background: '#333', color: '#fff', borderRadius: '20px', transform: 'rotateY(180deg)', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                   <div style={{ background: '#e21b3c', padding: '15px', color: '#fff', textAlign: 'center', fontWeight: '900', fontSize: '1.2rem' }}>
                     ❌ RIESGO DE LA MISIÓN
                   </div>
@@ -286,25 +300,25 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                     onClick={() => setIsFlipped(false)}
                     style={{ background: '#222', padding: '15px', textAlign: 'center', cursor: 'pointer', color: '#fff', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
                   >
-                    <span style={{ fontSize: '1.2rem' }}>↩️</span> <span>Volver a la Misión</span>
+                    <span>Volver a la Misión ▲</span>
                   </div>
                 </div>
 
               </div>
 
               {/* Action Buttons */}
-              <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
-                <button 
-                  onClick={handleCaught}
-                  style={{ flex: 1, background: '#fff', color: '#e21b3c', border: '2px solid #e21b3c', padding: '15px', borderRadius: '4px', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', borderBottom: '6px solid #e21b3c' }}
-                >
-                  ¡Me pillaron!
-                </button>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '20px' }}>
                 <button 
                   onClick={handleComplete}
-                  style={{ flex: 1, background: '#26890c', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', borderBottom: '6px solid #1f7309' }}
+                  style={{ width: '100%', background: '#26890c', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: '900', fontSize: '1.1rem', cursor: 'pointer', borderBottom: '6px solid #1f7309' }}
                 >
                   Completada
+                </button>
+                <button 
+                  onClick={handleCaught}
+                  style={{ width: '100%', background: '#fff', color: '#e21b3c', border: '2px solid #e21b3c', padding: '12px', borderRadius: '4px', fontWeight: '900', fontSize: '1rem', cursor: 'pointer', borderBottom: '4px solid #e21b3c' }}
+                >
+                  ¡Me pillaron!
                 </button>
               </div>
 
@@ -319,15 +333,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         )}
       </div>
 
-      {/* FOOTER BUTTONS */}
-      <div style={{ padding: '20px', display: 'flex', justifyContent: 'center' }}>
-        <button 
-          onClick={() => setShowStore(true)}
-          style={{ background: '#d89e00', color: '#fff', border: 'none', padding: '15px 30px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', cursor: 'pointer', borderBottom: '6px solid #b38200' }}
-        >
-          TIENDA 🛒
-        </button>
-      </div>
+      {/* FOOTER BUTTONS REMOVED */}
 
       {/* CURSES MODAL */}
       {showCurses && (

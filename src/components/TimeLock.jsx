@@ -56,9 +56,16 @@ function TimeLock({ onUnlock }) {
           La página está bloqueada.<br/>
           Se abrirá automáticamente en:
         </p>
-        <div style={{ background: '#333', color: '#fff', fontSize: '3rem', fontWeight: '900', padding: '15px', borderRadius: '4px', letterSpacing: '5px' }}>
+        <div style={{ background: '#333', color: '#fff', fontSize: '3rem', fontWeight: '900', padding: '15px', borderRadius: '4px', letterSpacing: '5px', marginBottom: '20px' }}>
           {formatTime(timeLeft)}
         </div>
+        
+        {/* TEMPORARY BYPASS BUTTON */}
+        <button 
+          onClick={onUnlock} 
+          style={{ background: '#26890c', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' }}>
+          Bypass Temporal (Modo Pruebas)
+        </button>
       </div>
     </div>
   );
