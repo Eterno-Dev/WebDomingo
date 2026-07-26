@@ -18,6 +18,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const [showCurses, setShowCurses] = useState(false);
   const [showRace, setShowRace] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
   
   // Selection modals for store items
   const [storeTargetAction, setStoreTargetAction] = useState(null); // Which action is waiting for a target
@@ -319,6 +320,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         if (currentMissions.length > 0) {
           // Double points of active mission
           currentMissions[activeIndex].points = (currentMissions[activeIndex].points || 15) * 2;
+          currentMissions[activeIndex].isDoubled = true;
           saveActiveMissions(gender, currentMissions);
         } else {
           alert('No tienes misión actual para duplicar.');
@@ -334,7 +336,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
       saveGameState(gender, { monedas: myData.scores.monedas - action.price });
       showPurchaseSuccess(action.text);
     } else {
-      alert('No tienes suficientes monedas.');
+      showError('No tienes suficientes monedas');
     }
   };
 
@@ -419,6 +421,14 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     setTimeout(() => {
       setPurchaseMessage(null);
       setShowStore(false);
+    }, 2000);
+  };
+
+  const showError = (text) => {
+    if (navigator.vibrate) navigator.vibrate(300);
+    setErrorMessage(text);
+    setTimeout(() => {
+      setErrorMessage(null);
     }, 2000);
   };
 
@@ -582,7 +592,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                       padding: '5px 10px', 
                       borderRadius: '8px'
                     }}>
-                      Recompensa: <span style={{ color: activeMission.points > 30 ? '#333' : 'inherit' }}>+{activeMission.points} 🪙</span>
+                      Recompensa: <span style={{ color: activeMission.isDoubled ? '#333' : 'inherit' }}>+{activeMission.points} 🪙</span>
                     </div>
                   </div>
                   <div 
@@ -754,6 +764,15 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(255,255,255,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 300 }}>
           <h2 style={{ color: '#fff', fontSize: '1.8rem', textAlign: 'center', background: '#26890c', padding: '25px', borderRadius: '12px', fontWeight: '900', boxShadow: '0 10px 30px rgba(38,137,12,0.4)', maxWidth: '80%' }}>
             {purchaseMessage}
+          </h2>
+        </div>
+      )}
+
+      {/* ERROR MESSAGE OVERLAY */}
+      {errorMessage && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(255,255,255,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 300 }}>
+          <h2 style={{ color: '#fff', fontSize: '1.3rem', textAlign: 'center', background: '#e21b3c', padding: '15px 25px', borderRadius: '12px', fontWeight: '900', boxShadow: '0 10px 30px rgba(226,27,60,0.4)', maxWidth: '80%' }}>
+            {errorMessage}
           </h2>
         </div>
       )}
