@@ -124,7 +124,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
   const checkCheckpoints = (newRetos) => {
     if (!gameState || !gameState.globalCheckpoints) return;
-    const checkpoints = [5, 10, 15];
+    const checkpoints = [5, 10, 12, 15];
     checkpoints.forEach(cp => {
       if (newRetos >= cp && !gameState.globalCheckpoints[cp.toString()]) {
         setGlobalCheckpoint(cp.toString());
@@ -135,8 +135,8 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         const team2 = shuffled.slice(Math.ceil(shuffled.length / 2));
         
         const randomChallenge = teamChallenges[Math.floor(Math.random() * teamChallenges.length)];
-        const rewardRetos = cp === 5 ? 1 : (cp === 10 ? 2 : 3);
-        const rewardCoins = cp === 5 ? 20 : (cp === 10 ? 40 : 60);
+        const rewardRetos = cp === 5 ? 1 : (cp === 10 ? 2 : (cp === 12 ? 2 : 3));
+        const rewardCoins = cp === 5 ? 20 : (cp === 10 ? 40 : (cp === 12 ? 50 : 60));
 
         triggerGroupEvent({
           type: 'Batalla de Equipos 2vs2',
@@ -145,7 +145,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           rewardText: `+${rewardRetos} Reto${rewardRetos > 1 ? 's' : ''} y +${rewardCoins}🪙`,
           rewardRetos,
           rewardCoins,
-          emoji: '⚔️',
+          emoji: '',
           team1,
           team2,
           tieBreaker: Math.random() < 0.5 ? 'team1' : 'team2',
@@ -406,12 +406,6 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   };
 
   const playerColor = getPlayerColor(gender);
-
-  const getTeamGradient = (teamIds) => {
-    if (!teamIds || teamIds.length === 0) return '#333';
-    if (teamIds.length === 1) return getPlayerColor(teamIds[0]);
-    return `linear-gradient(135deg, ${getPlayerColor(teamIds[0])} 0%, ${getPlayerColor(teamIds[1])} 100%)`;
-  };
 
   if (gameState.isGameOver) {
     const sortedPlayers = [...allPlayers].sort((a,b) => (b[1].scores?.retos_completados || 0) - (a[1].scores?.retos_completados || 0));
@@ -734,7 +728,6 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           
           {globalEvent.type === 'Batalla de Equipos 2vs2' ? (
             <div style={{ width: '100%', maxWidth: '500px' }}>
-              <div style={{ fontSize: '4rem', marginBottom: '10px' }}>{globalEvent.emoji}</div>
               <h2 style={{ color: '#fff', fontSize: '2.5rem', marginBottom: '10px', textTransform: 'uppercase', fontWeight: '900' }}>BATALLA POR EQUIPOS</h2>
               
               <p style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '20px', fontWeight: 'bold', background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '8px' }}>
@@ -771,11 +764,11 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
                   {/* TEAM 1 CARD */}
-                  <div style={{ background: getTeamGradient(globalEvent.team1), padding: '20px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', border: '2px solid rgba(255,255,255,0.2)' }}>
-                    <h3 style={{ margin: 0, color: '#fff', fontSize: '1.5rem', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>EQUIPO 1</h3>
+                  <div style={{ background: '#222', padding: '20px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', border: '2px solid rgba(255,255,255,0.2)' }}>
+                    <h3 style={{ margin: 0, color: '#fff', fontSize: '1.5rem', fontWeight: '900' }}>EQUIPO 1</h3>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                       {globalEvent.team1?.map(id => (
-                        <span key={id} style={{ background: 'rgba(255,255,255,0.25)', color: '#fff', padding: '8px 16px', borderRadius: '20px', fontWeight: '900', fontSize: '1.2rem', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.5)' }}>
+                        <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '8px 16px', borderRadius: '20px', fontWeight: '900', fontSize: '1.2rem', border: '2px solid rgba(255,255,255,0.5)' }}>
                           {gameState.players[id]?.name || '???'}
                         </span>
                       ))}
@@ -783,7 +776,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                     <button 
                       onClick={() => castGlobalVote(gender, 'team1')}
                       style={{ 
-                        background: globalEvent.votes?.[gender] === 'team1' ? '#fff' : 'rgba(0,0,0,0.4)', 
+                        background: globalEvent.votes?.[gender] === 'team1' ? '#fff' : 'rgba(255,255,255,0.1)', 
                         color: globalEvent.votes?.[gender] === 'team1' ? '#333' : '#fff', 
                         border: '2px solid #fff', 
                         padding: '15px', 
@@ -803,14 +796,12 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '2.5rem', color: '#fff', fontWeight: '900', textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>VS</div>
-
                   {/* TEAM 2 CARD */}
-                  <div style={{ background: getTeamGradient(globalEvent.team2), padding: '20px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', border: '2px solid rgba(255,255,255,0.2)' }}>
-                    <h3 style={{ margin: 0, color: '#fff', fontSize: '1.5rem', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>EQUIPO 2</h3>
+                  <div style={{ background: '#222', padding: '20px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', border: '2px solid rgba(255,255,255,0.2)' }}>
+                    <h3 style={{ margin: 0, color: '#fff', fontSize: '1.5rem', fontWeight: '900' }}>EQUIPO 2</h3>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                       {globalEvent.team2?.map(id => (
-                        <span key={id} style={{ background: 'rgba(255,255,255,0.25)', color: '#fff', padding: '8px 16px', borderRadius: '20px', fontWeight: '900', fontSize: '1.2rem', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.5)' }}>
+                        <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '8px 16px', borderRadius: '20px', fontWeight: '900', fontSize: '1.2rem', border: '2px solid rgba(255,255,255,0.5)' }}>
                           {gameState.players[id]?.name || '???'}
                         </span>
                       ))}
@@ -818,7 +809,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                     <button 
                       onClick={() => castGlobalVote(gender, 'team2')}
                       style={{ 
-                        background: globalEvent.votes?.[gender] === 'team2' ? '#fff' : 'rgba(0,0,0,0.4)', 
+                        background: globalEvent.votes?.[gender] === 'team2' ? '#fff' : 'rgba(255,255,255,0.1)', 
                         color: globalEvent.votes?.[gender] === 'team2' ? '#333' : '#fff', 
                         border: '2px solid #fff', 
                         padding: '15px', 
@@ -868,9 +859,9 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           {/* Header */}
           <div style={{ background: '#111', padding: '15px 20px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '4px solid #333' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <h3 style={{ margin: 0, fontWeight: '900', fontSize: '1.8rem', fontFamily: "'Fredoka', sans-serif" }}>🏁 CARRERA</h3>
-              <div style={{ background: '#e21b3c', padding: '5px 10px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', fontFamily: 'monospace' }}>
-                ⏳ {timeLeft}
+              <h3 style={{ margin: 0, fontWeight: '900', fontSize: '1.2rem', fontFamily: "'Fredoka', sans-serif" }}>CARRERA</h3>
+              <div style={{ background: '#e21b3c', padding: '3px 8px', borderRadius: '4px', fontWeight: '900', fontSize: '1rem', fontFamily: 'monospace' }}>
+                {timeLeft}
               </div>
             </div>
             <button onClick={() => setShowRace(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '2rem', cursor: 'pointer', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>×</button>
@@ -882,6 +873,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
             {/* Meta Line (Finish Line) & Checkpoints */}
             <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none' }}>
               <div style={{ position: 'absolute', bottom: '90%', width: '100%', borderTop: '4px dashed #FFD700', opacity: 0.8 }}><span style={{ position: 'absolute', top: '-25px', left: '10px', color: '#FFD700', fontWeight: 'bold' }}>META (15)</span></div>
+              <div style={{ position: 'absolute', bottom: '72%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 12</span></div>
               <div style={{ position: 'absolute', bottom: '60%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 10</span></div>
               <div style={{ position: 'absolute', bottom: '30%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 5</span></div>
             </div>
