@@ -220,17 +220,21 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     if (action.type === 'skip_penalty') {
       const newCurses = myData.curses.filter(c => c.id !== targetItem.id);
       saveActiveCurses(gender, newCurses);
+      saveGameState(gender, { monedas: myData.scores.monedas - action.price });
     } else if (action.type === 'steal_coins') {
       const stolen = Math.min(10, targetData.scores?.monedas || 0);
       saveGameState(targetId, { monedas: (targetData.scores?.monedas || 0) - stolen });
       saveGameState(gender, { monedas: (myData.scores?.monedas || 0) + stolen - action.price });
       showPurchaseSuccess(`Robaste ${stolen}🪙 a ${targetData.name}`);
       setStoreTargetAction(null);
-      return; // Handled cost here due to stolen amount logic
+      return; 
     } else if (action.type === 'steal_reto') {
       if ((targetData.scores?.retos_completados || 0) > 0) {
         saveGameState(targetId, { retos_completados: (targetData.scores?.retos_completados || 0) - 1 });
-        saveGameState(gender, { retos_completados: (myData.scores?.retos_completados || 0) + 1 });
+        saveGameState(gender, { 
+          retos_completados: (myData.scores?.retos_completados || 0) + 1,
+          monedas: myData.scores.monedas - action.price
+        });
       } else {
         alert(`${targetData.name} no tiene retos para robar.`);
         return;
@@ -239,17 +243,27 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
       const myRetos = myData.scores?.retos_completados || 0;
       const theirRetos = targetData.scores?.retos_completados || 0;
       saveGameState(targetId, { retos_completados: myRetos });
-      saveGameState(gender, { retos_completados: theirRetos });
+      saveGameState(gender, { 
+        retos_completados: theirRetos,
+        monedas: myData.scores.monedas - action.price
+      });
     }
 
-    // Pay for the item (if not already handled)
-    saveGameState(gender, { monedas: myData.scores.monedas - action.price });
     showPurchaseSuccess(action.text);
     setStoreTargetAction(null);
   };
 
   const showPurchaseSuccess = (text) => {
-    setPurchaseMessage(`¡Hecho: ${text}!`);
+    // Vibrate and sound if supported
+    if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: ['#26890c', '#fff', '#d89e00']
+    });
+
+    setPurchaseMessage(`¡Comprado: ${text}!`);
     setTimeout(() => {
       setPurchaseMessage(null);
       setShowStore(false);
@@ -409,7 +423,15 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                   <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
                     <span style={{ fontSize: '0.9rem', color: '#666', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold' }}>{activeMission.category}</span>
                     <p style={{ fontSize: '1.4rem', fontWeight: '900', margin: '0 0 20px 0' }}>{activeMission.text}</p>
-                    <div style={{ fontSize: '1.2rem', color: playerColor, fontWeight: '900' }}>
+                    <div style={{ 
+                      fontSize: activeMission.points > 30 ? '1.8rem' : '1.2rem', 
+                      color: activeMission.points > 30 ? '#e21b3c' : playerColor, 
+                      fontWeight: '900', 
+                      background: activeMission.points > 30 ? '#ffeb3b' : 'transparent', 
+                      padding: activeMission.points > 30 ? '10px 15px' : '5px 10px', 
+                      borderRadius: '8px',
+                      textShadow: activeMission.points > 30 ? '1px 1px 0px rgba(0,0,0,0.1)' : 'none'
+                    }}>
                       Recompensa: +{activeMission.points} 🪙
                     </div>
                   </div>
@@ -572,8 +594,8 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
       {/* PURCHASE MESSAGE OVERLAY */}
       {purchaseMessage && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.8)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 110 }}>
-          <h2 style={{ color: '#fff', fontSize: '2rem', textAlign: 'center', background: '#e21b3c', padding: '20px', borderRadius: '4px', fontWeight: '900' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(255,255,255,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 300 }}>
+          <h2 style={{ color: '#fff', fontSize: '1.8rem', textAlign: 'center', background: '#26890c', padding: '25px', borderRadius: '12px', fontWeight: '900', boxShadow: '0 10px 30px rgba(38,137,12,0.4)', maxWidth: '80%' }}>
             {purchaseMessage}
           </h2>
         </div>

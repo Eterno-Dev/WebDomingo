@@ -36,11 +36,13 @@ function Welcome({ onSelectGender }) {
               <span style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>Vuelve a revisar la aplicación web cuando suene.</span>
             </div>
 
-            <div style={{ margin: '1.5rem 0', textAlign: 'center' }}>
-              <p style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold' }}>
-                Realiza los retos y compite con tus rivales.<br/><br/>
+            <div style={{ margin: '1.5rem 0', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <span style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold', lineHeight: '1.4' }}>
+                Realiza los retos y compite con tus rivales.
+              </span>
+              <span style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold', lineHeight: '1.4' }}>
                 Al <strong>acabar el tiempo</strong> la persona que haya completado <strong>más retos gana</strong>.
-              </p>
+              </span>
             </div>
             <button className="btn btn-primary" onClick={() => setStep(2)} style={{ width: '100%', padding: '15px', fontFamily: "'Montserrat', sans-serif", fontSize: '1.2rem', fontWeight: 'bold' }}>
               ¡A JUGAR!

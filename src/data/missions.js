@@ -48,7 +48,7 @@ export const storeActions = [
   { id: 'a2', text: 'Saltarte una penalización activa.', price: 30, type: 'skip_penalty', emoji: '🛡️' },
   { id: 'a3', text: 'Robar 10 monedas a otro jugador.', price: 20, type: 'steal_coins', emoji: '🥷' },
   { id: 'a4', text: 'Comprar una misión extra.', price: 30, type: 'buy_mission', emoji: '🃏' },
-  { id: 'a5', text: 'Duplicar recompensa de tu misión.', price: 60, type: 'double_reward', emoji: 'x2' },
+  { id: 'a5', text: 'Duplicar recompensa de tu misión.', price: 30, type: 'double_reward', emoji: 'x2' },
   { id: 'a6', text: 'Bomba secreta (El siguiente pierde 2 retos).', price: 50, type: 'secret_bomb', emoji: '💣' },
   { id: 'a7', text: 'Robar 1 reto a otro jugador.', price: 80, type: 'steal_reto', emoji: '🏃‍♂️' },
   { id: 'a8', text: 'Intercambiar cantidad de retos con otro.', price: 120, type: 'swap_retos', emoji: '🎭' },
