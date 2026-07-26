@@ -100,21 +100,15 @@ export const storeActions = [
 
 export const teamChallenges = [
   "A ver quién hace la mejor coreografía con la canción de Superestrella.",
-  "El equipo que consiga mantener el contacto visual más tiempo sin reírse.",
   "Batalla de gallos: improvisad un rap insultando amistosamente al otro equipo.",
-  "El equipo que haga la torre humana más creativa y aguante 10 segundos.",
-  "Carrera de caballitos (uno a caballito del otro) hasta tocar la puerta y volver.",
+  "Carrera de caballitos (uno a caballito del otro). El primero en llegar al objetivo establecido gana.",
   "El equipo que consiga meter más bolitas de papel en un vaso desde 2 metros en 1 minuto.",
-  "Batalla de mímica: representad una película de terror, el mejor acting gana.",
-  "El equipo que cuente el chiste más malo y consiga que el otro equipo se ría.",
-  "El equipo que consiga decir un trabalenguas sin equivocarse en menos tiempo.",
-  "A ver qué equipo consigue la pose más ridícula en modo estatua (15 segundos).",
-  "Piedra, papel o tijera gigante: tenéis que usar todo el cuerpo para representar el elemento.",
-  "El equipo que logre equilibrar un vaso de plástico en la cabeza de uno de ellos caminando en línea recta.",
-  "Batalla de miradas cruzadas: un jugador de cada equipo mirándose fijamente hasta que uno parpadee.",
-  "Adivina la canción: un jugador tararea y su compañero tiene que adivinarla antes que el otro equipo.",
-  "El primer equipo en encontrar y traer algo de color amarillo fosforito.",
-  "Pulso chino a ciegas: gana el equipo que venza en un pulso chino con los ojos cerrados."
+  "Haceros pasar por un personaje famoso o de Disney: un jugador hace la voz estando escondido/de espaldas, y el otro actúa. El mejor dúo gana.",
+  "Debate absurdo: Escoged un tema ridículo (ej: ¿Es mejor sudar mayonesa o llorar kétchup?). Tenéis 2 minutos para defender vuestra postura apasionadamente.",
+  "Escena de telenovela: Tenéis 2 minutos para improvisar la escena de telenovela más dramática posible. Debe incluir una traición absurda y un desmayo.",
+  "El equipo que consiga construir la estructura más alta y estable usando objetos de la sala (zapatos, libros, cojines...) en 2 minutos.",
+  "Desfile de moda a ciegas: Un jugador cierra los ojos y su compañero tiene 1 minuto para disfrazarlo con lo que encuentre. Luego debe hacer un desfile épico.",
+  "El monstruo de dos cabezas: Los dos del equipo se abrazan por la cintura. Uno usa solo el brazo izquierdo y el otro el derecho. Deben preparar un vaso de agua y bebérselo como si fueran una sola persona."
 ];
 
 export const getRandomMission = () => {
