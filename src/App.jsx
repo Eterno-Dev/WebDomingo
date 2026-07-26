@@ -3,10 +3,12 @@ import TimeLock from './components/TimeLock';
 import Login from './components/Login';
 import Welcome from './components/Welcome';
 import PhaseManager from './components/PhaseManager';
+import AdminPanel from './components/AdminPanel';
 
 function App() {
   const [isTimeUnlocked, setIsTimeUnlocked] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [gender, setGender] = useState(null);
   const [playerName, setPlayerName] = useState('');
   const [isDebugMode, setIsDebugMode] = useState(false);
@@ -19,7 +21,12 @@ function App() {
     const savedGender = localStorage.getItem('hh_gender');
     const savedName = localStorage.getItem('hh_name');
     const savedDebug = localStorage.getItem('hh_debug') === 'true';
-    if (savedGender) {
+    const savedAdmin = localStorage.getItem('hh_admin') === 'true';
+    
+    if (savedAdmin) {
+      setIsLoggedIn(true);
+      setIsAdmin(true);
+    } else if (savedGender) {
       setIsTimeUnlocked(true);
       setIsLoggedIn(true);
       setGender(savedGender);
@@ -33,10 +40,15 @@ function App() {
     localStorage.setItem('hh_unlocked', 'true');
   };
 
-  const handleLogin = (debugMode) => {
+  const handleLogin = (debugMode, adminMode = false) => {
     setIsLoggedIn(true);
-    setIsDebugMode(debugMode);
-    localStorage.setItem('hh_debug', debugMode);
+    if (adminMode) {
+      setIsAdmin(true);
+      localStorage.setItem('hh_admin', 'true');
+    } else {
+      setIsDebugMode(debugMode);
+      localStorage.setItem('hh_debug', debugMode);
+    }
   };
 
   const handleGenderSelect = (selectedGender, name) => {
@@ -44,15 +56,19 @@ function App() {
     setPlayerName(name);
   };
 
+  if (isLoggedIn && isAdmin) {
+    return <AdminPanel />;
+  }
+
   return (
     <>
       {!isLoggedIn && <Login onLogin={handleLogin} />}
-      {isLoggedIn && !isTimeUnlocked && <TimeLock onUnlock={handleUnlock} />}
-      {isLoggedIn && isTimeUnlocked && !gender && <Welcome onSelectGender={handleGenderSelect} />}
-      {isLoggedIn && isTimeUnlocked && gender && <PhaseManager gender={gender} playerName={playerName} isDebugMode={isDebugMode} />}
+      {isLoggedIn && !isAdmin && !isTimeUnlocked && <TimeLock onUnlock={handleUnlock} />}
+      {isLoggedIn && !isAdmin && isTimeUnlocked && !gender && <Welcome onSelectGender={handleGenderSelect} />}
+      {isLoggedIn && !isAdmin && isTimeUnlocked && gender && <PhaseManager gender={gender} playerName={playerName} isDebugMode={isDebugMode} />}
 
       {/* Debug Reset Button */}
-      {isDebugMode && (
+      {(isDebugMode || isAdmin) && (
         <button 
           onClick={() => {
             localStorage.clear();

@@ -18,7 +18,7 @@ const database = getDatabase(app);
 let usingLocalFallback = false;
 
 const getLocalState = () => {
-  const state = { players: {}, globalEvent: null };
+  const state = { players: {}, globalEvent: null, globalUnlock: localStorage.getItem('hh_global_unlock') === 'true' };
   ['cuni1', 'cuni2', 'cuni3', 'cuni4'].forEach(id => {
     state.players[id] = {
       name: localStorage.getItem(`hh_name_${id}`) || undefined,
@@ -36,6 +36,37 @@ export const savePlayerName = (cuniId, name) => {
     set(ref(database, `v2/players/${cuniId}/name`), name).catch(() => {});
   }
   localStorage.setItem(`hh_name_${cuniId}`, name);
+  window.dispatchEvent(new Event('storage'));
+};
+
+export const resetPlayer = (cuniId) => {
+  if (!usingLocalFallback) {
+    set(ref(database, `v2/players/${cuniId}`), {
+      scores: { monedas: 0, penalizaciones: 0, retos_completados: 0 },
+      missions: [],
+      curses: []
+    }).catch(() => {});
+  }
+  localStorage.removeItem(`hh_name_${cuniId}`);
+  localStorage.removeItem(`hh_scores_${cuniId}`);
+  localStorage.removeItem(`hh_missions_${cuniId}`);
+  localStorage.removeItem(`hh_curses_${cuniId}`);
+  window.dispatchEvent(new Event('storage'));
+};
+
+export const resetAllPlayers = () => {
+  ['cuni1', 'cuni2', 'cuni3', 'cuni4'].forEach(id => {
+    resetPlayer(id);
+  });
+  clearGroupEvent();
+  setGlobalUnlock(false);
+};
+
+export const setGlobalUnlock = (isUnlocked) => {
+  if (!usingLocalFallback) {
+    set(ref(database, 'v2/globalUnlock'), isUnlocked).catch(() => {});
+  }
+  localStorage.setItem('hh_global_unlock', isUnlocked);
   window.dispatchEvent(new Event('storage'));
 };
 
@@ -120,7 +151,8 @@ export const listenToGameState = (callback) => {
 
     callback({
       players,
-      globalEvent: data.globalEvent || null
+      globalEvent: data.globalEvent || null,
+      globalUnlock: data.globalUnlock || false
     });
   }, (error) => {
     console.error("Firebase Error de Permisos o Conexión:", error);

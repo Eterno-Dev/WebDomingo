@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { listenToGameState } from '../firebase';
 
 // SET YOUR PARTY START TIME HERE
 // By default, it sets to today at 18:00 (6:00 PM)
@@ -11,9 +12,14 @@ const PARTY_START_TIME = getPartyTime();
 
 function TimeLock({ onUnlock }) {
   const [timeLeft, setTimeLeft] = useState(PARTY_START_TIME - new Date());
-  const [clickCount, setClickCount] = useState(0);
 
   useEffect(() => {
+    listenToGameState((state) => {
+      if (state.globalUnlock) {
+        onUnlock();
+      }
+    });
+
     const timer = setInterval(() => {
       const remaining = PARTY_START_TIME - new Date();
       setTimeLeft(remaining);
@@ -40,17 +46,10 @@ function TimeLock({ onUnlock }) {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   };
 
-  const handleSecretUnlock = () => {
-    setClickCount(prev => prev + 1);
-    if (clickCount >= 4) {
-      onUnlock(); // Unlock on 5th click (hidden bypass)
-    }
-  };
-
   return (
     <div className="screen-container" style={{ background: '#46178f', color: '#fff' }}>
       <div style={{ textAlign: 'center', background: '#fff', color: '#333', padding: '40px', borderRadius: '8px', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', maxWidth: '400px', width: '100%' }}>
-        <span style={{ fontSize: '4rem', display: 'block', marginBottom: '20px', cursor: 'pointer' }} onClick={handleSecretUnlock} title="Click me 5 times to bypass">⏳</span>
+        <span style={{ fontSize: '4rem', display: 'block', marginBottom: '20px' }}>⏳</span>
         <h1 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '2.5rem', fontWeight: '900', color: '#e21b3c', marginBottom: '10px' }}>¡LA FIESTA AÚN NO HA EMPEZADO!</h1>
         <p style={{ fontSize: '1.2rem', marginBottom: '30px', fontWeight: 'bold' }}>
           La página está bloqueada.<br/>
@@ -59,13 +58,6 @@ function TimeLock({ onUnlock }) {
         <div style={{ background: '#333', color: '#fff', fontSize: '3rem', fontWeight: '900', padding: '15px', borderRadius: '4px', letterSpacing: '5px', marginBottom: '20px' }}>
           {formatTime(timeLeft)}
         </div>
-        
-        {/* TEMPORARY BYPASS BUTTON */}
-        <button 
-          onClick={onUnlock} 
-          style={{ background: '#26890c', color: '#fff', border: 'none', padding: '10px 20px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', marginTop: '10px' }}>
-          Bypass Temporal (Modo Pruebas)
-        </button>
       </div>
     </div>
   );

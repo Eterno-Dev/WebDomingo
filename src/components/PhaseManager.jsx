@@ -16,6 +16,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const [gameState, setGameState] = useState(null);
   const [showStore, setShowStore] = useState(false);
   const [showCurses, setShowCurses] = useState(false);
+  const [showRace, setShowRace] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState(null);
   
   // Carousel and Card State
@@ -91,7 +92,8 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     const reward = currentMission.points || 15;
     
     saveGameState(gender, {
-      monedas: (myData.scores.monedas || 0) + reward
+      monedas: (myData.scores.monedas || 0) + reward,
+      retos_completados: (myData.scores.retos_completados || 0) + 1
     });
     
     confetti({
@@ -232,7 +234,13 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
       {/* MY STATUS BAR */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px 20px', background: '#fff', borderBottom: '2px solid #eaeaea' }}>
-        <div style={{ fontWeight: '900', fontSize: '1.2rem', textTransform: 'uppercase' }}>HOLA, <span style={{ color: playerColor }}>{playerName}</span></div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* RACE ICON */}
+          <div onClick={() => setShowRace(true)} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', background: '#333', color: '#fff', padding: '5px 10px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', boxShadow: '0 2px 4px rgba(0,0,0,0.2)' }}>
+            🏁
+          </div>
+          <div style={{ fontWeight: '900', fontSize: '1.2rem', textTransform: 'uppercase' }}>HOLA, <span style={{ color: playerColor }}>{playerName}</span></div>
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           
           <div onClick={() => setShowCurses(true)} style={{ display: 'flex', alignItems: 'center', gap: '5px', cursor: 'pointer', background: curses.length > 0 ? '#e21b3c' : '#eee', color: curses.length > 0 ? '#fff' : '#333', padding: '5px 10px', borderRadius: '4px' }}>
@@ -420,10 +428,87 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
             +{globalEvent.reward} 🪙
           </div>
           {isDebugMode && (
-             <button onClick={handleCloseEvent} style={{ background: '#fff', color: '#e21b3c', border: 'none', padding: '15px 30px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', cursor: 'pointer' }}>
+             <button onClick={() => clearGroupEvent()} style={{ background: '#fff', color: '#e21b3c', border: 'none', padding: '15px 30px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', cursor: 'pointer' }}>
                Cerrar Evento (Admin)
              </button>
           )}
+        </div>
+      )}
+
+      {/* RACE TRACK MODAL */}
+      {showRace && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: '20px' }}>
+          <div style={{ background: '#fff', width: '100%', maxWidth: '600px', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ background: '#333', padding: '15px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontWeight: '900', fontSize: '1.5rem' }}>🏁 CARRERA DE RETOS</h3>
+              <button onClick={() => setShowRace(false)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '2rem', cursor: 'pointer', lineHeight: '1' }}>×</button>
+            </div>
+            <div style={{ padding: '30px 20px', background: '#222' }}>
+              
+              {/* Render each player as a track line */}
+              {allPlayers.sort((a,b) => (b[1].scores?.retos_completados || 0) - (a[1].scores?.retos_completados || 0)).map(([id, pData], index) => {
+                const retos = pData.scores?.retos_completados || 0;
+                // Let's cap max visual progress at 15 for now so it doesn't break the UI
+                const progressPercentage = Math.min((retos / 15) * 100, 95); 
+                
+                return (
+                  <div key={id} style={{ marginBottom: '30px', position: 'relative' }}>
+                    
+                    {/* Track Line */}
+                    <div style={{ width: '100%', height: '15px', background: '#111', borderRadius: '10px', overflow: 'hidden', border: '2px solid #444', position: 'relative' }}>
+                      <div style={{ width: `${progressPercentage}%`, height: '100%', background: getPlayerColor(id), transition: 'width 0.5s ease-out' }}></div>
+                    </div>
+                    
+                    {/* Player Avatar positioned on the track */}
+                    <div style={{ 
+                      position: 'absolute', 
+                      top: '50%', 
+                      left: `${progressPercentage}%`, 
+                      transform: 'translate(-50%, -50%)',
+                      transition: 'left 0.5s ease-out',
+                      zIndex: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center'
+                    }}>
+                      <div style={{ 
+                        width: '40px', 
+                        height: '40px', 
+                        background: getPlayerColor(id), 
+                        borderRadius: '50%', 
+                        display: 'flex', 
+                        justifyContent: 'center', 
+                        alignItems: 'center',
+                        color: '#fff',
+                        fontWeight: '900',
+                        fontSize: '1.2rem',
+                        border: '3px solid #fff',
+                        boxShadow: '0 4px 10px rgba(0,0,0,0.5)'
+                      }}>
+                        {retos}
+                      </div>
+                      <div style={{ 
+                        color: '#fff', 
+                        fontWeight: 'bold', 
+                        fontSize: '0.8rem', 
+                        marginTop: '5px',
+                        background: 'rgba(0,0,0,0.5)',
+                        padding: '2px 6px',
+                        borderRadius: '4px'
+                      }}>
+                        {pData.name}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+              
+              <div style={{ textAlign: 'center', color: '#aaa', marginTop: '30px', fontSize: '0.9rem', fontStyle: 'italic' }}>
+                Eventos especiales se desbloquearán a medida que completéis misiones...
+              </div>
+
+            </div>
+          </div>
         </div>
       )}
 

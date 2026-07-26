@@ -17,9 +17,11 @@ function Login({ onLogin }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (password.toUpperCase() === 'PARTY') {
-      onLogin(false);
+      onLogin(false, false); // onLogin(isDebugMode, isAdmin)
     } else if (password.toUpperCase() === 'PARTY_DEBUG') {
-      onLogin(true);
+      onLogin(true, false);
+    } else if (password.toUpperCase() === 'ADMIN') {
+      onLogin(false, true);
     } else {
       setError('Contraseña incorrecta');
     }
