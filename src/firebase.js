@@ -18,7 +18,7 @@ const database = getDatabase(app);
 let usingLocalFallback = false;
 
 const getLocalState = () => {
-  const state = { players: {}, globalEvent: null, globalUnlock: localStorage.getItem('hh_global_unlock') === 'true', isGameOver: localStorage.getItem('hh_game_over') === 'true' };
+  const state = { players: {}, globalEvent: null, globalTrap: null, globalUnlock: localStorage.getItem('hh_global_unlock') === 'true', isGameOver: localStorage.getItem('hh_game_over') === 'true' };
   ['cuni1', 'cuni2', 'cuni3', 'cuni4'].forEach(id => {
     state.players[id] = {
       name: localStorage.getItem(`hh_name_${id}`) || undefined,
@@ -28,6 +28,7 @@ const getLocalState = () => {
     };
   });
   state.globalEvent = JSON.parse(localStorage.getItem('hh_global_event') || 'null');
+  state.globalTrap = JSON.parse(localStorage.getItem('hh_global_trap') || 'null');
   return state;
 };
 
@@ -59,6 +60,7 @@ export const resetAllPlayers = () => {
     resetPlayer(id);
   });
   clearGroupEvent();
+  clearGlobalTrap();
   setGlobalUnlock(false);
   setGameOver(false);
 };
@@ -121,6 +123,22 @@ export const clearGroupEvent = () => {
   window.dispatchEvent(new Event('storage'));
 };
 
+export const setGlobalTrap = (trap) => {
+  if (!usingLocalFallback) {
+    set(ref(database, 'v2/globalTrap'), trap).catch(() => {});
+  }
+  localStorage.setItem('hh_global_trap', JSON.stringify(trap));
+  window.dispatchEvent(new Event('storage'));
+};
+
+export const clearGlobalTrap = () => {
+  if (!usingLocalFallback) {
+    set(ref(database, 'v2/globalTrap'), null).catch(() => {});
+  }
+  localStorage.removeItem('hh_global_trap');
+  window.dispatchEvent(new Event('storage'));
+};
+
 export const listenToGameState = (callback) => {
   let hasTriggered = false;
 
@@ -161,6 +179,7 @@ export const listenToGameState = (callback) => {
     callback({
       players,
       globalEvent: data.globalEvent || null,
+      globalTrap: data.globalTrap || null,
       globalUnlock: data.globalUnlock || false,
       isGameOver: data.isGameOver || false
     });

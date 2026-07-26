@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { storeActions, groupChallenges, getMultipleRandomMissions, getRandomMission } from '../data/missions';
-import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent } from '../firebase';
+import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent, setGlobalTrap, clearGlobalTrap } from '../firebase';
 
 // Helper to format remaining time
 const formatTime = (ms) => {
@@ -18,6 +18,10 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const [showCurses, setShowCurses] = useState(false);
   const [showRace, setShowRace] = useState(false);
   const [purchaseMessage, setPurchaseMessage] = useState(null);
+  
+  // Selection modals for store items
+  const [storeTargetAction, setStoreTargetAction] = useState(null); // Which action is waiting for a target
+  const [trapAlert, setTrapAlert] = useState(null); // Alert to show when stepping on a bomb
   
   // Carousel and Card State
   const [currentMissionIndex, setCurrentMissionIndex] = useState(0);
@@ -95,6 +99,18 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     const currentMission = myData.missions[currentMissionIndex];
     if (!currentMission) return;
 
+    // Check for Secret Bomb
+    if (gameState && gameState.globalTrap && gameState.globalTrap.type === 'secret_bomb') {
+      const penaltyRetos = 2;
+      saveGameState(gender, {
+        retos_completados: Math.max(0, (myData.scores.retos_completados || 0) - penaltyRetos)
+      });
+      clearGlobalTrap();
+      setTrapAlert(`💥 ¡BOOM! Has pisado una bomba secreta de ${gameState.players[gameState.globalTrap.setter]?.name || 'alguien'}. Pierdes ${penaltyRetos} retos.`);
+      replaceCurrentMission();
+      return; // Stop normal reward
+    }
+
     const reward = currentMission.points || 15;
     
     saveGameState(gender, {
@@ -151,15 +167,19 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const buyAction = (action) => {
     const myData = getMyData();
     if ((myData.scores.monedas || 0) >= action.price) {
-      if (action.type === 'skip_penalty') {
-        if (!myData.curses || myData.curses.length === 0) {
+      
+      // Actions requiring Target Selection
+      if (['skip_penalty', 'steal_coins', 'steal_reto', 'swap_retos'].includes(action.type)) {
+        if (action.type === 'skip_penalty' && (!myData.curses || myData.curses.length === 0)) {
           alert('¡No tienes penalizaciones activas para saltar!');
           return;
         }
-        const newCurses = [...myData.curses];
-        newCurses.shift(); // Remove oldest
-        saveActiveCurses(gender, newCurses);
-      } else if (action.type === 'change_mission') {
+        setStoreTargetAction(action);
+        return; // Wait for target selection
+      }
+
+      // Immediate Actions
+      if (action.type === 'change_mission') {
         replaceCurrentMission();
       } else if (action.type === 'buy_mission') {
         const currentMissions = [...(myData.missions || [])];
@@ -171,20 +191,69 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           alert('¡No quedan misiones nuevas disponibles para comprar!');
           return; // cancel purchase
         }
+      } else if (action.type === 'double_reward') {
+        const currentMissions = [...(myData.missions || [])];
+        if (currentMissions.length > 0) {
+          // Double points of active mission
+          currentMissions[currentMissionIndex].points = (currentMissions[currentMissionIndex].points || 15) * 2;
+          saveActiveMissions(gender, currentMissions);
+        } else {
+          alert('No tienes misión actual para duplicar.');
+          return;
+        }
+      } else if (action.type === 'secret_bomb') {
+        setGlobalTrap({ type: 'secret_bomb', setter: gender });
       }
       
-      saveGameState(gender, {
-        monedas: myData.scores.monedas - action.price
-      });
-      
-      setPurchaseMessage(`¡Compraste: ${action.text}!`);
-      setTimeout(() => {
-        setPurchaseMessage(null);
-        setShowStore(false);
-      }, 2000);
+      saveGameState(gender, { monedas: myData.scores.monedas - action.price });
+      showPurchaseSuccess(action.text);
     } else {
       alert('No tienes suficientes monedas.');
     }
+  };
+
+  const executeTargetedAction = (action, targetId, targetItem) => {
+    const myData = getMyData();
+    const otherPlayers = gameState.players;
+    const targetData = otherPlayers[targetId];
+
+    if (action.type === 'skip_penalty') {
+      const newCurses = myData.curses.filter(c => c.id !== targetItem.id);
+      saveActiveCurses(gender, newCurses);
+    } else if (action.type === 'steal_coins') {
+      const stolen = Math.min(10, targetData.scores?.monedas || 0);
+      saveGameState(targetId, { monedas: (targetData.scores?.monedas || 0) - stolen });
+      saveGameState(gender, { monedas: (myData.scores?.monedas || 0) + stolen - action.price });
+      showPurchaseSuccess(`Robaste ${stolen}🪙 a ${targetData.name}`);
+      setStoreTargetAction(null);
+      return; // Handled cost here due to stolen amount logic
+    } else if (action.type === 'steal_reto') {
+      if ((targetData.scores?.retos_completados || 0) > 0) {
+        saveGameState(targetId, { retos_completados: (targetData.scores?.retos_completados || 0) - 1 });
+        saveGameState(gender, { retos_completados: (myData.scores?.retos_completados || 0) + 1 });
+      } else {
+        alert(`${targetData.name} no tiene retos para robar.`);
+        return;
+      }
+    } else if (action.type === 'swap_retos') {
+      const myRetos = myData.scores?.retos_completados || 0;
+      const theirRetos = targetData.scores?.retos_completados || 0;
+      saveGameState(targetId, { retos_completados: myRetos });
+      saveGameState(gender, { retos_completados: theirRetos });
+    }
+
+    // Pay for the item (if not already handled)
+    saveGameState(gender, { monedas: myData.scores.monedas - action.price });
+    showPurchaseSuccess(action.text);
+    setStoreTargetAction(null);
+  };
+
+  const showPurchaseSuccess = (text) => {
+    setPurchaseMessage(`¡Hecho: ${text}!`);
+    setTimeout(() => {
+      setPurchaseMessage(null);
+      setShowStore(false);
+    }, 2000);
   };
 
   if (!gameState) return <div style={{ color: '#fff', textAlign: 'center', marginTop: '50px' }}>Cargando...</div>;
@@ -260,6 +329,18 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: '#f5f7fa', color: '#333', fontFamily: "'Inter', sans-serif", position: 'relative' }}>
       
+      {/* TRAP ALERT OVERLAY */}
+      {trapAlert && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 300, padding: '20px' }}>
+          <div style={{ background: '#e21b3c', color: '#fff', padding: '30px', borderRadius: '12px', textAlign: 'center', maxWidth: '400px', boxShadow: '0 10px 25px rgba(0,0,0,0.5)' }}>
+            <div style={{ fontSize: '4rem', marginBottom: '15px' }}>💣</div>
+            <h2 style={{ fontWeight: '900', fontSize: '2rem', marginBottom: '15px' }}>¡TRAMPA!</h2>
+            <p style={{ fontSize: '1.2rem', fontWeight: 'bold', marginBottom: '20px' }}>{trapAlert}</p>
+            <button onClick={() => setTrapAlert(null)} style={{ background: '#fff', color: '#e21b3c', padding: '12px 24px', border: 'none', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer' }}>Entendido</button>
+          </div>
+        </div>
+      )}
+
       {/* GLOBAL HEADER (Flat Kahoot Style) */}
       <div style={{ padding: '10px', background: '#fff', borderBottom: '2px solid #eaeaea', display: 'flex', gap: '10px', overflowX: 'auto', whiteSpace: 'nowrap', alignItems: 'center' }}>
         {allPlayers.map(([id, pData]) => (
@@ -444,6 +525,46 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                   </button>
                 </div>
               ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* STORE TARGET SELECTION MODAL */}
+      {storeTargetAction && (
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.95)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 120, padding: '20px' }}>
+          <div style={{ background: '#fff', width: '100%', maxWidth: '400px', borderRadius: '8px', overflow: 'hidden' }}>
+            <div style={{ background: '#d89e00', padding: '15px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h3 style={{ margin: 0, fontWeight: '900' }}>{storeTargetAction.type === 'skip_penalty' ? 'ELIGE EL CASTIGO A QUITAR' : 'ELIGE UNA VÍCTIMA'}</h3>
+              <button onClick={() => setStoreTargetAction(null)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '1.8rem', cursor: 'pointer', lineHeight: '1' }}>×</button>
+            </div>
+            <div style={{ padding: '20px', maxHeight: '60vh', overflowY: 'auto' }}>
+              
+              {storeTargetAction.type === 'skip_penalty' && curses.map(curse => (
+                <button 
+                  key={curse.id} 
+                  onClick={() => executeTargetedAction(storeTargetAction, null, curse)}
+                  style={{ display: 'block', width: '100%', background: '#f5f5f5', border: '2px solid #ddd', padding: '15px', borderRadius: '4px', marginBottom: '10px', textAlign: 'left', cursor: 'pointer', fontWeight: 'bold' }}
+                >
+                  {curse.text}
+                </button>
+              ))}
+
+              {['steal_coins', 'steal_reto', 'swap_retos'].includes(storeTargetAction.type) && allPlayers.filter(p => p[0] !== gender).map(([id, pData]) => (
+                <button 
+                  key={id} 
+                  onClick={() => executeTargetedAction(storeTargetAction, id, null)}
+                  style={{ display: 'flex', justifyContent: 'space-between', width: '100%', background: getPlayerColor(id), color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', marginBottom: '10px', cursor: 'pointer', fontWeight: 'bold', fontSize: '1.2rem' }}
+                >
+                  <span>{pData.name}</span>
+                  <span>{storeTargetAction.type === 'steal_coins' ? `🪙 ${pData.scores?.monedas||0}` : `🏁 ${pData.scores?.retos_completados||0}`}</span>
+                </button>
+              ))}
+
+              {['steal_coins', 'steal_reto', 'swap_retos'].includes(storeTargetAction.type) && allPlayers.filter(p => p[0] !== gender).length === 0 && (
+                <div style={{ textAlign: 'center', padding: '20px', fontWeight: 'bold', color: '#666' }}>No hay otros jugadores en la partida.</div>
+              )}
+
             </div>
           </div>
         </div>
