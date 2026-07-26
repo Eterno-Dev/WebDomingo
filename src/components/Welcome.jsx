@@ -37,9 +37,9 @@ function Welcome({ onSelectGender }) {
             </div>
 
             <div style={{ margin: '1.5rem 0', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <span style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold', lineHeight: '1.4' }}>
+              <h1 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '2rem', fontWeight: '900', color: '#e21b3c', lineHeight: '1.2', margin: 0, textTransform: 'uppercase' }}>
                 Realiza los retos y compite con tus rivales.
-              </span>
+              </h1>
               <span style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold', lineHeight: '1.4' }}>
                 Al <strong>acabar el tiempo</strong> la persona que haya completado <strong>más retos gana</strong>.
               </span>

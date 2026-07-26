@@ -541,15 +541,13 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                     <span style={{ fontSize: '0.9rem', color: '#666', textTransform: 'uppercase', marginBottom: '10px', fontWeight: 'bold' }}>{activeMission.category}</span>
                     <p style={{ fontSize: '1.4rem', fontWeight: '900', margin: '0 0 20px 0' }}>{activeMission.text}</p>
                     <div style={{ 
-                      fontSize: activeMission.points > 30 ? '1.8rem' : '1.2rem', 
-                      color: activeMission.points > 30 ? '#e21b3c' : playerColor, 
+                      fontSize: '1.2rem', 
+                      color: playerColor, 
                       fontWeight: '900', 
-                      background: activeMission.points > 30 ? '#ffeb3b' : 'transparent', 
-                      padding: activeMission.points > 30 ? '10px 15px' : '5px 10px', 
-                      borderRadius: '8px',
-                      textShadow: activeMission.points > 30 ? '1px 1px 0px rgba(0,0,0,0.1)' : 'none'
+                      padding: '5px 10px', 
+                      borderRadius: '8px'
                     }}>
-                      Recompensa: +{activeMission.points} 🪙
+                      Recompensa: <span style={{ color: activeMission.points > 30 ? '#333' : 'inherit' }}>+{activeMission.points} 🪙</span>
                     </div>
                   </div>
                   <div 
@@ -764,15 +762,12 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                   
                   {/* RETO CARD */}
                   <div style={{ background: '#fff', borderRadius: '20px', border: '1px solid #ddd', overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                    <div style={{ background: '#888', padding: '15px', color: '#fff', textAlign: 'center', fontWeight: '900', fontSize: '1.2rem', textTransform: 'uppercase' }}>
-                      RETO DE EQUIPO
-                    </div>
                     <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                      <p style={{ color: '#333', fontSize: '1.4rem', margin: '0 0 15px 0', fontWeight: 'bold' }}>
+                      <p style={{ color: '#333', fontSize: '1.4rem', margin: '0 0 10px 0', fontWeight: 'bold', textAlign: 'center' }}>
                         {globalEvent.text}
                       </p>
-                      <div style={{ fontSize: '1.5rem', color: '#d89e00', fontWeight: '900' }}>
-                        Premio: {globalEvent.rewardText}
+                      <div style={{ fontSize: '1.1rem', color: '#666', fontWeight: 'bold', textAlign: 'center' }}>
+                        {globalEvent.rewardText}
                       </div>
                     </div>
                   </div>
@@ -897,7 +892,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
               <div style={{ position: 'absolute', bottom: '90%', width: '100%', borderTop: '4px dashed #FFD700', opacity: 0.8 }}><span style={{ position: 'absolute', top: '-25px', left: '10px', color: '#FFD700', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>META</span></div>
               <div style={{ position: 'absolute', bottom: '72%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>12</span></div>
               <div style={{ position: 'absolute', bottom: '60%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>10</span></div>
-              <div style={{ position: 'absolute', bottom: '30%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>5</span></div>
+              <div style={{ position: 'absolute', bottom: '40%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>5</span></div>
             </div>
             
             {/* Render each player as a vertical track */}
