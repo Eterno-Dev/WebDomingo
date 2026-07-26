@@ -148,6 +148,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           emoji: '⚔️',
           team1,
           team2,
+          tieBreaker: Math.random() < 0.5 ? 'team1' : 'team2',
           votes: {},
           resolved: false
         });
@@ -171,12 +172,13 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           if (v === 'team2') t2Votes++;
         });
 
-        if (t1Votes !== t2Votes) {
-          const winningTeamId = t1Votes > t2Votes ? 'team1' : 'team2';
+        if (t1Votes !== t2Votes || (t1Votes === t2Votes)) {
+          const isTie = t1Votes === t2Votes;
+          const winningTeamId = isTie ? globalEvent.tieBreaker : (t1Votes > t2Votes ? 'team1' : 'team2');
           const winningPlayers = globalEvent[winningTeamId] || [];
           
           // Mark as resolved locally so we don't trigger multiple times
-          triggerGroupEvent({ ...globalEvent, resolved: true, winner: winningTeamId, t1Votes, t2Votes });
+          triggerGroupEvent({ ...globalEvent, resolved: true, winner: winningTeamId, tied: isTie, t1Votes, t2Votes });
           
           // If I am on the winning team, I give myself the reward
           if (winningPlayers.includes(gender)) {
@@ -188,15 +190,12 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
             confetti({ particleCount: 200, spread: 90, origin: { y: 0.5 }, colors: ['#FFD700', '#fff'] });
           }
 
-          // Clear event after 5 seconds to show the result
+          // Clear event after 7 seconds to show the result
           if (gender === winningPlayers[0]) {
             setTimeout(() => {
               clearGroupEvent();
-            }, 5000);
+            }, 7000);
           }
-        } else {
-          // It's a tie, mark as tied and wait for admin
-          triggerGroupEvent({ ...globalEvent, resolved: true, tied: true, t1Votes, t2Votes });
         }
       }
     }
@@ -742,28 +741,26 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
               {globalEvent.resolved ? (
                 <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', color: '#333' }}>
-                  {globalEvent.tied ? (
-                    <>
-                      <h3 style={{ fontSize: '2rem', color: '#e21b3c', margin: '0 0 10px 0', fontWeight: '900' }}>¡EMPATE!</h3>
-                      <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Han quedado {globalEvent.t1Votes} a {globalEvent.t2Votes}.</p>
-                      <p style={{ color: '#666' }}>El administrador decidirá el ganador desde su panel.</p>
-                    </>
-                  ) : (
-                    <>
-                      <h3 style={{ fontSize: '2rem', color: '#26890c', margin: '0 0 10px 0', fontWeight: '900' }}>¡GANADORES!</h3>
-                      <p style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>
-                        EQUIPO {globalEvent.winner === 'team1' ? '1' : '2'}
-                      </p>
-                      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                        {globalEvent[globalEvent.winner].map(id => (
-                          <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 15px', borderRadius: '20px', fontWeight: 'bold' }}>
-                            {gameState.players[id]?.name}
-                          </span>
-                        ))}
-                      </div>
-                      <p style={{ color: '#666', marginTop: '15px' }}>Volviendo al juego...</p>
-                    </>
+                  {globalEvent.tied && (
+                    <div style={{ background: '#e21b3c', color: '#fff', padding: '10px', borderRadius: '8px', marginBottom: '15px' }}>
+                      <h3 style={{ margin: '0 0 5px 0', fontSize: '1.5rem', fontWeight: '900' }}>¡EMPATE A VOTOS!</h3>
+                      <p style={{ margin: 0, fontWeight: 'bold' }}>Se ha lanzado una moneda al aire... 🪙</p>
+                    </div>
                   )}
+                  
+                  <h3 style={{ fontSize: '2rem', color: '#26890c', margin: '0 0 10px 0', fontWeight: '900' }}>
+                    {globalEvent.tied ? '¡LA MONEDA ELIGE AL EQUIPO ' : '¡GANADORES EQUIPO '} 
+                    {globalEvent.winner === 'team1' ? '1!' : '2!'}
+                  </h3>
+                  
+                  <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '15px' }}>
+                    {globalEvent[globalEvent.winner].map(id => (
+                      <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 15px', borderRadius: '20px', fontWeight: 'bold' }}>
+                        {gameState.players[id]?.name}
+                      </span>
+                    ))}
+                  </div>
+                  <p style={{ color: '#666', marginTop: '20px', fontWeight: 'bold' }}>Volviendo a la carrera automáticamente...</p>
                 </div>
               ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
