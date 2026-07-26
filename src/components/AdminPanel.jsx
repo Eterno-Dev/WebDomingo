@@ -48,11 +48,20 @@ const AdminPanel = () => {
             </button>
             <button 
               onClick={() => {
+                if(window.confirm('¿Terminar el juego para TODOS y mostrar ganador?')) {
+                  setGameOver(true);
+                }
+              }}
+              style={{ flex: 1, background: gameState.isGameOver ? '#555' : '#d89e00', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
+              {gameState.isGameOver ? 'Juego Terminado' : 'Finalizar Juego'}
+            </button>
+            <button 
+              onClick={() => {
                 if(window.confirm('¿Estás seguro? Se borrará TODO (jugadores, misiones, monedas).')) {
                   resetAllPlayers();
                 }
               }}
-              style={{ flex: 1, background: '#e21b3c', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
+              style={{ flex: '1 1 100%', background: '#e21b3c', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', marginTop: '5px' }}>
               Reiniciar Partida Completa
             </button>
           </div>

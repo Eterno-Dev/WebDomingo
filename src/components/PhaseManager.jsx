@@ -210,6 +210,43 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
   const playerColor = getPlayerColor(gender);
 
+  if (gameState.isGameOver) {
+    const sortedPlayers = [...allPlayers].sort((a,b) => (b[1].scores?.retos_completados || 0) - (a[1].scores?.retos_completados || 0));
+    const winner = sortedPlayers[0];
+    
+    // Check if there is a winner (if nobody played, winner is undefined)
+    if (!winner) {
+      return <div style={{ color: '#fff', textAlign: 'center', marginTop: '50px' }}>Juego Terminado. No hay jugadores.</div>;
+    }
+
+    return (
+      <div className="screen-container" style={{ background: '#222', color: '#fff', textAlign: 'center', padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+        <h1 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '3rem', color: '#ffd700', marginBottom: '20px', textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>¡FIN DEL JUEGO!</h1>
+        <div style={{ fontSize: '6rem', margin: '20px 0' }}>🏆</div>
+        <h2 style={{ fontSize: '2rem', marginBottom: '10px' }}>El ganador absoluto es:</h2>
+        
+        <div style={{ 
+          background: getPlayerColor(winner[0]), 
+          color: '#fff', 
+          fontSize: '3rem', 
+          fontWeight: '900', 
+          padding: '20px', 
+          borderRadius: '12px', 
+          margin: '20px auto', 
+          maxWidth: '400px',
+          boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
+          textTransform: 'uppercase'
+        }}>
+          {winner[1].name}
+        </div>
+        
+        <div style={{ fontSize: '1.5rem', marginTop: '20px', fontWeight: 'bold' }}>
+          Con <span style={{ color: '#ffd700', fontSize: '2rem' }}>{winner[1].scores?.retos_completados || 0}</span> retos completados.
+        </div>
+      </div>
+    );
+  }
+
   const nextMission = () => {
     setIsFlipped(false);
     setCurrentMissionIndex((prev) => (prev + 1) % Math.max(1, missions.length));
