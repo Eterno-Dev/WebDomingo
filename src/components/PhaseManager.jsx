@@ -771,14 +771,14 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                   </div>
                   <div style={{ padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     {globalEvent.tied && (
-                      <div style={{ background: '#e21b3c', color: '#fff', padding: '10px', borderRadius: '8px', marginBottom: '15px', width: '100%' }}>
-                        <h3 style={{ margin: '0 0 5px 0', fontSize: '1.5rem', fontWeight: '900' }}>¡EMPATE A VOTOS!</h3>
-                        <p style={{ margin: 0, fontWeight: 'bold' }}>Se ha lanzado una moneda al aire... 🪙</p>
+                      <div style={{ background: '#eee', color: '#333', padding: '10px 20px', borderRadius: '8px', marginBottom: '15px', width: '100%' }}>
+                        <h3 style={{ margin: '0 0 5px 0', fontSize: '1.2rem', fontWeight: '900' }}>EMPATE</h3>
+                        <p style={{ margin: 0, fontWeight: 'bold', fontSize: '0.9rem' }}>Se ha seleccionado un ganador al azar.</p>
                       </div>
                     )}
                     
-                    <h3 style={{ fontSize: '2rem', color: '#26890c', margin: '0 0 10px 0', fontWeight: '900' }}>
-                      {globalEvent.tied ? '¡LA MONEDA ELIGE AL EQUIPO ' : '¡GANADORES EQUIPO '} 
+                    <h3 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '2.5rem', color: '#26890c', margin: '0 0 10px 0', fontWeight: '900', textTransform: 'uppercase' }}>
+                      {globalEvent.tied ? 'GANADORES: EQUIPO ' : '¡GANADORES EQUIPO '} 
                       {globalEvent.winner === 'team1' ? '1!' : '2!'}
                     </h3>
                     
