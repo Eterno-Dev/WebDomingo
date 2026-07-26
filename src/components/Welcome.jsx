@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { listenToGameState } from '../firebase';
 
 function Welcome({ onSelectGender }) {
   const [showWarning, setShowWarning] = useState(true);
   const [name, setName] = useState('');
   const [step, setStep] = useState(1); // 1 = Rules, 2 = Name, 3 = Color
+  const [gameState, setGameState] = useState(null);
+
+  useEffect(() => {
+    listenToGameState((state) => {
+      setGameState(state);
+    });
+  }, []);
 
   const handleGenderSelect = (gender) => {
     localStorage.setItem('hh_gender', gender);
@@ -48,8 +56,19 @@ function Welcome({ onSelectGender }) {
           <button 
             disabled={!name.trim()}
             onClick={() => {
-              const colors = ['cuni1', 'cuni2', 'cuni3', 'cuni4'];
-              const randomColor = colors[Math.floor(Math.random() * colors.length)];
+              if (!gameState) {
+                alert("Conectando al servidor, espera un segundo...");
+                return;
+              }
+              const allColors = ['cuni1', 'cuni2', 'cuni3', 'cuni4'];
+              const availableColors = allColors.filter(c => !gameState.players[c]?.name);
+              
+              if (availableColors.length === 0) {
+                alert("¡La sala está llena! Ya hay 4 jugadores conectados.");
+                return;
+              }
+
+              const randomColor = availableColors[Math.floor(Math.random() * availableColors.length)];
               handleGenderSelect(randomColor);
             }} 
             style={{ width: '100%', padding: '15px', fontSize: '1.2rem', fontWeight: 'bold', background: name.trim() ? '#e21b3c' : '#ccc', color: '#fff', border: 'none', borderRadius: '4px', cursor: name.trim() ? 'pointer' : 'not-allowed', boxShadow: name.trim() ? '0 4px 0 #b0102b' : 'none' }}

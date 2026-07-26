@@ -437,77 +437,81 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
       {/* RACE TRACK MODAL */}
       {showRace && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0,0,0,0.9)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100, padding: '20px' }}>
-          <div style={{ background: '#fff', width: '100%', maxWidth: '600px', borderRadius: '8px', overflow: 'hidden' }}>
-            <div style={{ background: '#333', padding: '15px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h3 style={{ margin: 0, fontWeight: '900', fontSize: '1.5rem' }}>🏁 CARRERA DE RETOS</h3>
-              <button onClick={() => setShowRace(false)} style={{ background: 'none', border: 'none', color: '#fff', fontSize: '2rem', cursor: 'pointer', lineHeight: '1' }}>×</button>
-            </div>
-            <div style={{ padding: '30px 20px', background: '#222' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: '#222', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
+          {/* Header */}
+          <div style={{ background: '#111', padding: '15px 20px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '4px solid #333' }}>
+            <h3 style={{ margin: 0, fontWeight: '900', fontSize: '1.8rem', fontFamily: "'Fredoka', sans-serif" }}>🏁 CARRERA DE RETOS</h3>
+            <button onClick={() => setShowRace(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '2rem', cursor: 'pointer', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>×</button>
+          </div>
+          
+          {/* Track Area */}
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'flex-end', padding: '40px 10px', position: 'relative', overflow: 'hidden' }}>
+            
+            {/* Meta Line (Finish Line) */}
+            <div style={{ position: 'absolute', top: '40px', left: 0, width: '100%', height: '30px', background: 'repeating-linear-gradient(90deg, #fff 0, #fff 20px, #000 20px, #000 40px)', zIndex: 1, opacity: 0.8, boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }}></div>
+            
+            {/* Render each player as a vertical track */}
+            {allPlayers.map(([id, pData], index) => {
+              const retos = pData.scores?.retos_completados || 0;
+              // Cap progress at 15 for max height (100%)
+              const progressPercentage = Math.min((retos / 15) * 100, 100); 
               
-              {/* Render each player as a track line */}
-              {allPlayers.sort((a,b) => (b[1].scores?.retos_completados || 0) - (a[1].scores?.retos_completados || 0)).map(([id, pData], index) => {
-                const retos = pData.scores?.retos_completados || 0;
-                // Let's cap max visual progress at 15 for now so it doesn't break the UI
-                const progressPercentage = Math.min((retos / 15) * 100, 95); 
-                
-                return (
-                  <div key={id} style={{ marginBottom: '30px', position: 'relative' }}>
+              return (
+                <div key={id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '22%', zIndex: 2 }}>
+                  
+                  {/* Track container */}
+                  <div style={{ flex: 1, width: '100%', maxWidth: '60px', background: '#333', borderRadius: '30px', position: 'relative', border: '3px solid #111', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.8)' }}>
                     
-                    {/* Track Line */}
-                    <div style={{ width: '100%', height: '15px', background: '#111', borderRadius: '10px', overflow: 'hidden', border: '2px solid #444', position: 'relative' }}>
-                      <div style={{ width: `${progressPercentage}%`, height: '100%', background: getPlayerColor(id), transition: 'width 0.5s ease-out' }}></div>
-                    </div>
+                    {/* Filled progress */}
+                    <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: `${progressPercentage}%`, background: getPlayerColor(id), borderRadius: '30px', transition: 'height 1s cubic-bezier(0.34, 1.56, 0.64, 1)' }}></div>
                     
-                    {/* Player Avatar positioned on the track */}
+                    {/* Player Avatar */}
                     <div style={{ 
                       position: 'absolute', 
-                      top: '50%', 
-                      left: `${progressPercentage}%`, 
-                      transform: 'translate(-50%, -50%)',
-                      transition: 'left 0.5s ease-out',
-                      zIndex: 2,
+                      bottom: `max(0%, calc(${progressPercentage}% - 25px))`, // Keep avatar inside track bounds
+                      left: '50%', 
+                      transform: 'translateX(-50%)',
+                      width: '60px',
+                      height: '60px',
+                      background: getPlayerColor(id),
+                      borderRadius: '50%',
+                      border: '4px solid #fff',
                       display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center'
+                      justifyContent: 'center',
+                      alignItems: 'center',
+                      color: '#fff',
+                      fontWeight: '900',
+                      fontSize: '1.5rem',
+                      boxShadow: '0 8px 16px rgba(0,0,0,0.6)',
+                      zIndex: 3,
+                      transition: 'bottom 1s cubic-bezier(0.34, 1.56, 0.64, 1)'
                     }}>
-                      <div style={{ 
-                        width: '40px', 
-                        height: '40px', 
-                        background: getPlayerColor(id), 
-                        borderRadius: '50%', 
-                        display: 'flex', 
-                        justifyContent: 'center', 
-                        alignItems: 'center',
-                        color: '#fff',
-                        fontWeight: '900',
-                        fontSize: '1.2rem',
-                        border: '3px solid #fff',
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.5)'
-                      }}>
-                        {retos}
-                      </div>
-                      <div style={{ 
-                        color: '#fff', 
-                        fontWeight: 'bold', 
-                        fontSize: '0.8rem', 
-                        marginTop: '5px',
-                        background: 'rgba(0,0,0,0.5)',
-                        padding: '2px 6px',
-                        borderRadius: '4px'
-                      }}>
-                        {pData.name}
-                      </div>
+                      {retos}
                     </div>
                   </div>
-                );
-              })}
-              
-              <div style={{ textAlign: 'center', color: '#aaa', marginTop: '30px', fontSize: '0.9rem', fontStyle: 'italic' }}>
-                Eventos especiales se desbloquearán a medida que completéis misiones...
-              </div>
 
-            </div>
+                  {/* Player Name Tag */}
+                  <div style={{ 
+                    marginTop: '20px',
+                    color: '#fff', 
+                    fontWeight: '900', 
+                    fontSize: '1rem', 
+                    background: getPlayerColor(id),
+                    padding: '8px 12px',
+                    borderRadius: '8px',
+                    textTransform: 'uppercase',
+                    textAlign: 'center',
+                    boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
+                    maxWidth: '100%',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap'
+                  }}>
+                    {pData.name}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
