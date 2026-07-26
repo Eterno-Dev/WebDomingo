@@ -68,15 +68,18 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const replaceCurrentMission = () => {
     const myData = getMyData();
     const currentMissions = [...(myData.missions || [])];
-    const newMission = getMultipleRandomMissions(1, currentMissions)[0];
+    const newMissions = getMultipleRandomMissions(1, currentMissions);
     
-    if (currentMissions.length > 0) {
-      currentMissions[currentMissionIndex] = newMission;
+    if (newMissions.length > 0) {
+      if (currentMissions.length > 0) {
+        currentMissions[currentMissionIndex] = newMissions[0];
+      } else {
+        currentMissions.push(newMissions[0]);
+      }
+      saveActiveMissions(gender, currentMissions);
     } else {
-      currentMissions.push(newMission);
+      alert("No hay más misiones únicas disponibles en el juego.");
     }
-    
-    saveActiveMissions(gender, currentMissions);
     setIsFlipped(false);
   };
 
@@ -152,13 +155,14 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         replaceCurrentMission();
       } else if (action.type === 'buy_mission') {
         const currentMissions = [...(myData.missions || [])];
-        if (currentMissions.length >= 4) {
-          alert('¡Ya tienes el máximo de 4 misiones!');
-          return;
+        const newMissions = getMultipleRandomMissions(1, currentMissions);
+        if (newMissions.length > 0) {
+          currentMissions.push(newMissions[0]);
+          saveActiveMissions(gender, currentMissions);
+        } else {
+          alert('¡No quedan misiones nuevas disponibles para comprar!');
+          return; // cancel purchase
         }
-        const newMission = getMultipleRandomMissions(1, currentMissions)[0];
-        currentMissions.push(newMission);
-        saveActiveMissions(gender, currentMissions);
       }
       
       saveGameState(gender, {

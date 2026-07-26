@@ -48,7 +48,7 @@ export const storeActions = [
   { id: 'a2', text: 'Saltarte una penalización activa.', price: 40, type: 'skip_penalty', emoji: '🛡️' },
   { id: 'a3', text: 'Ver la mano de misiones de otro.', price: 50, type: 'spy_missions', emoji: '👀' },
   { id: 'a4', text: 'Robar 10 monedas a otro.', price: 60, type: 'steal_coins', emoji: '🥷' },
-  { id: 'a5', text: 'Comprar una misión extra (máx 4).', price: 70, type: 'buy_mission', emoji: '🃏' },
+  { id: 'a5', text: 'Comprar una misión extra.', price: 70, type: 'buy_mission', emoji: '🃏' },
   { id: 'a6', text: 'Duplicar recompensa de tu misión.', price: 80, type: 'double_reward', emoji: 'x2' },
 ];
 
@@ -57,15 +57,15 @@ export const getRandomMission = () => {
   return secretMissions[randomIndex];
 };
 
-export const getMultipleRandomMissions = (count = 3, existingMissions = []) => {
-  const selected = [...existingMissions];
-  const available = secretMissions.filter(m => !selected.find(sel => sel.id === m.id));
+export const getMultipleRandomMissions = (countToAdd = 3, existingMissions = []) => {
+  const newMissions = [];
+  const available = secretMissions.filter(m => !existingMissions.find(sel => sel.id === m.id));
   
-  while (selected.length < count && available.length > 0) {
+  while (newMissions.length < countToAdd && available.length > 0) {
     const randomIndex = Math.floor(Math.random() * available.length);
-    selected.push(available[randomIndex]);
+    newMissions.push(available[randomIndex]);
     available.splice(randomIndex, 1);
   }
   
-  return selected;
+  return newMissions;
 };
