@@ -84,17 +84,24 @@ const AdminPanel = () => {
                   </div>
                   
                   {isActive && (
-                    <div style={{ flex: '1 1 100%', display: 'flex', gap: '10px', alignItems: 'center', background: '#222', padding: '10px', borderRadius: '4px' }}>
-                      <span style={{ fontSize: '1.2rem' }}>🪙 {pData.scores?.monedas || 0}</span>
-                      <button onClick={() => saveGameState(id, { monedas: (pData.scores?.monedas || 0) - 10 })} style={{ flex: 1, padding: '8px', background: '#e21b3c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>- 10</button>
-                      <button onClick={() => saveGameState(id, { monedas: (pData.scores?.monedas || 0) + 10 })} style={{ flex: 1, padding: '8px', background: '#26890c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ 10</button>
-                    </div>
-                  )}
+                    <div style={{ flex: '1 1 100%', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#222', padding: '10px', borderRadius: '4px' }}>
+                        <span style={{ fontSize: '1.2rem', minWidth: '60px' }}>🪙 {pData.scores?.monedas || 0}</span>
+                        <button onClick={() => saveGameState(id, { monedas: (pData.scores?.monedas || 0) - 10 })} style={{ flex: 1, padding: '8px', background: '#e21b3c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>- 10</button>
+                        <button onClick={() => saveGameState(id, { monedas: (pData.scores?.monedas || 0) + 10 })} style={{ flex: 1, padding: '8px', background: '#26890c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ 10</button>
+                      </div>
+                      
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#222', padding: '10px', borderRadius: '4px' }}>
+                        <span style={{ fontSize: '1.2rem', minWidth: '60px' }}>🎯 {pData.scores?.retos_completados || 0}</span>
+                        <button onClick={() => saveGameState(id, { retos_completados: Math.max(0, (pData.scores?.retos_completados || 0) - 1) })} style={{ flex: 1, padding: '8px', background: '#e21b3c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>- 1</button>
+                        <button onClick={() => saveGameState(id, { retos_completados: (pData.scores?.retos_completados || 0) + 1 })} style={{ flex: 1, padding: '8px', background: '#26890c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ 1</button>
+                      </div>
 
-                  {isActive && (
-                    <div style={{ flex: '1 1 100%', fontSize: '0.9rem', color: '#aaa', display: 'flex', gap: '10px' }}>
-                      <span>🎯 Retos: {pData.scores?.retos_completados || 0}</span>
-                      <span>💀 Penalizaciones: {pData.scores?.penalizaciones || 0}</span>
+                      <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#222', padding: '10px', borderRadius: '4px' }}>
+                        <span style={{ fontSize: '1.2rem', minWidth: '60px' }}>💀 {pData.scores?.penalizaciones || 0}</span>
+                        <button onClick={() => saveGameState(id, { penalizaciones: Math.max(0, (pData.scores?.penalizaciones || 0) - 1) })} style={{ flex: 1, padding: '8px', background: '#e21b3c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>- 1</button>
+                        <button onClick={() => saveGameState(id, { penalizaciones: (pData.scores?.penalizaciones || 0) + 1 })} style={{ flex: 1, padding: '8px', background: '#26890c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ 1</button>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -32,6 +32,12 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
     listenToGameState((state) => {
       setGameState(state);
+      // Auto-kick if the admin removes our player from the DB
+      if (state && state.players && state.players[gender] && !state.players[gender].name && playerName) {
+        // We were playing, but our name disappeared from the database (kicked)
+        localStorage.clear();
+        window.location.reload();
+      }
     });
 
     const intervalId = setInterval(() => {
