@@ -2,13 +2,13 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, set, update, onValue } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDjwlMMKpP2GyPBTYPDcWoZNhPhss-7niI",
-  authDomain: "heavenandhell-8d519.firebaseapp.com",
-  databaseURL: "https://heavenandhell-8d519-default-rtdb.firebaseio.com",
-  projectId: "heavenandhell-8d519",
-  storageBucket: "heavenandhell-8d519.firebasestorage.app",
-  messagingSenderId: "413460303000",
-  appId: "1:413460303000:web:1c493024c9931aa92654ed"
+  apiKey: "AIzaSyC5-zczlrpKkoWnF5REE5D-2CRhzkwJpC0",
+  authDomain: "webdomingo-463e4.firebaseapp.com",
+  databaseURL: "https://webdomingo-463e4-default-rtdb.firebaseio.com",
+  projectId: "webdomingo-463e4",
+  storageBucket: "webdomingo-463e4.firebasestorage.app",
+  messagingSenderId: "755007423671",
+  appId: "1:755007423671:web:acef646b59d2f3429c3932"
 };
 
 const app = initializeApp(firebaseConfig);
