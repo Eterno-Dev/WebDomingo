@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { storeActions, groupChallenges, getMultipleRandomMissions, getRandomMission } from '../data/missions';
-import { saveGameState, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent } from '../firebase';
+import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent } from '../firebase';
 
 // Helper to format remaining time
 const formatTime = (ms) => {
@@ -26,8 +26,8 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
-    // Sync name to global state
-    saveGameState(gender, { name: playerName });
+    // Sync name to global state properly
+    savePlayerName(gender, playerName);
 
     listenToGameState((state) => {
       setGameState(state);
@@ -181,7 +181,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
   const missions = myData.missions || [];
   const curses = myData.curses || [];
   const globalEvent = gameState.globalEvent;
-  const allPlayers = Object.entries(gameState.players);
+  const allPlayers = Object.entries(gameState.players).filter(([id, data]) => data.name);
 
   const activeIndex = Math.min(Math.max(0, currentMissionIndex), Math.max(0, missions.length - 1));
   const activeMission = missions[activeIndex];

@@ -21,6 +21,7 @@ const getLocalState = () => {
   const state = { players: {}, globalEvent: null };
   ['cuni1', 'cuni2', 'cuni3', 'cuni4'].forEach(id => {
     state.players[id] = {
+      name: localStorage.getItem(`hh_name_${id}`) || undefined,
       scores: JSON.parse(localStorage.getItem(`hh_scores_${id}`) || '{"monedas": 0, "penalizaciones": 0}'),
       missions: JSON.parse(localStorage.getItem(`hh_missions_${id}`) || '[]'),
       curses: JSON.parse(localStorage.getItem(`hh_curses_${id}`) || '[]')
@@ -28,6 +29,14 @@ const getLocalState = () => {
   });
   state.globalEvent = JSON.parse(localStorage.getItem('hh_global_event') || 'null');
   return state;
+};
+
+export const savePlayerName = (cuniId, name) => {
+  if (!usingLocalFallback) {
+    set(ref(database, `v2/players/${cuniId}/name`), name).catch(() => {});
+  }
+  localStorage.setItem(`hh_name_${cuniId}`, name);
+  window.dispatchEvent(new Event('storage'));
 };
 
 export const saveGameState = (cuniId, stateUpdates) => {
