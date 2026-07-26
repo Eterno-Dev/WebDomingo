@@ -33,6 +33,33 @@ export const secretMissions = [
   { id: 'm23', text: 'Saca a alguien a bailar durante 10 segundos.', category: 'Interacción', points: 25, penalty: 'Debes permanecer de pie mientras los demás están sentados.', duration: '15 minutos' },
   { id: 'm24', text: 'Consigue que alguien te haga una foto.', category: 'Interacción', points: 15, penalty: 'Haz poses de modelo exageradas cuando alguien te hable.', duration: '10 minutos' },
   { id: 'm25', text: 'Hazle un masaje en los hombros a alguien de repente.', category: 'Interacción', points: 20, penalty: 'Mantén una postura encorvada (como el jorobado).', duration: '15 minutos' },
+
+  // Nuevas Misiones - Tanda 2
+  { id: 'm26', text: 'Inicia un aplauso sin razón y haz que al menos uno te siga.', category: 'Interacción', points: 25, penalty: 'Tienes que aplaudir cada vez que hables.', duration: '10 minutos' },
+  { id: 'm27', text: 'Pregúntale a alguien cuál es su dinosaurio favorito.', category: 'Conversación', points: 10, penalty: 'Camina haciendo pasos gigantes de T-Rex.', duration: '20 minutos' },
+  { id: 'm28', text: 'Habla de una película inventada como si fuera un peliculón.', category: 'Creatividad', points: 20, penalty: 'Critica todo lo que dicen los demás como si fueras juez de Masterchef.', duration: '15 minutos' },
+  { id: 'm29', text: 'Acércate a alguien y dile "sé lo que hiciste" y vete.', category: 'Disimulo', points: 30, penalty: 'Camina siempre de espaldas.', duration: '10 minutos' },
+  { id: 'm30', text: 'Haz un brindis por un objeto inanimado (ej: esta cuchara).', category: 'Humor', points: 15, penalty: 'No puedes usar cubiertos, come con las manos (si es posible).', duration: 'Próxima comida' },
+  { id: 'm31', text: 'Grita "¡Olé!" cuando alguien tire o se le caiga algo.', category: 'Interacción', points: 20, penalty: 'Habla como si estuvieras narrando un partido de fútbol.', duration: '15 minutos' },
+  { id: 'm32', text: 'Ponte una prenda de otro sin que se dé cuenta.', category: 'Disimulo', points: 40, penalty: 'Lleva una chaqueta al revés.', duration: '30 minutos' },
+  { id: 'm33', text: 'Comienza una frase con "En mis tiempos..." 3 veces.', category: 'Conversación', points: 15, penalty: 'Habla muy lento como si fueras un anciano cansado.', duration: '15 minutos' },
+  { id: 'm34', text: 'Haz beatbox mientras otro habla.', category: 'Humor', points: 20, penalty: 'Tienes que terminar todas tus frases con un sonido de batería ("badum tss").', duration: '10 minutos' },
+  { id: 'm35', text: 'Inventa un saludo secreto (choque de manos) con alguien.', category: 'Creatividad', points: 20, penalty: 'Saluda militarmente a todos los que te hablen.', duration: '20 minutos' },
+  { id: 'm36', text: 'Pregunta si alguien ha visto tu mascota invisible.', category: 'Conversación', points: 15, penalty: 'Acaricia a tu perro invisible mientras hablas.', duration: '10 minutos' },
+  { id: 'm37', text: 'Bosteza muy exageradamente hasta que otro bostece.', category: 'Disimulo', points: 25, penalty: 'Tienes que estar tumbado o recostado en el sofá/silla.', duration: '15 minutos' },
+  { id: 'm38', text: 'Llama a alguien "Bro" o "Jefe" 5 veces seguidas.', category: 'Humor', points: 15, penalty: 'Habla con acento de gánster de los años 20.', duration: '15 minutos' },
+  { id: 'm39', text: 'Roba un vaso y esconde su contenido.', category: 'Disimulo', points: 30, penalty: 'Solo puedes beber si alguien te da permiso.', duration: '20 minutos' },
+  { id: 'm40', text: 'Haz de DJ y cambia la música sin avisar.', category: 'Interacción', points: 20, penalty: 'Baila constantemente, aunque estés sentado.', duration: '10 minutos' },
+  { id: 'm41', text: 'Hazte un selfie con 3 personas distraídas al fondo.', category: 'Creatividad', points: 25, penalty: 'Tienes que salir haciendo una mueca fea en todas las fotos.', duration: 'Toda la noche' },
+  { id: 'm42', text: 'Pide a alguien que te lea las manos o tu futuro.', category: 'Conversación', points: 15, penalty: 'Actúa como si predijeras tragedias todo el rato.', duration: '15 minutos' },
+  { id: 'm43', text: 'Dale un cumplido a alguien sobre sus orejas/nariz.', category: 'Interacción', points: 15, penalty: 'Cúbrete una oreja con la mano mientras hablas.', duration: '10 minutos' },
+  { id: 'm44', text: 'Finge tropezarte de forma muy dramática.', category: 'Humor', points: 25, penalty: 'Camina arrastrando una pierna.', duration: '20 minutos' },
+  { id: 'm45', text: 'Quédate mirando fijamente un punto vacío hasta que te pregunten.', category: 'Disimulo', points: 20, penalty: 'Mantén los ojos muy abiertos sin pestañear (lo máximo posible).', duration: '5 minutos' },
+  { id: 'm46', text: 'Habla de una criptomoneda falsa ("El Cuñi-Coin").', category: 'Conversación', points: 20, penalty: 'Termina las frases diciendo "mentalidad de tiburón".', duration: '10 minutos' },
+  { id: 'm47', text: 'Haz que dos personas choquen sus vasos.', category: 'Interacción', points: 20, penalty: 'Bebe un trago de agua cada vez que alguien diga tu nombre.', duration: '30 minutos' },
+  { id: 'm48', text: 'Dobla una servilleta en un origami rápido.', category: 'Creatividad', points: 15, penalty: 'Habla con voz de Mickey Mouse.', duration: '5 minutos' },
+  { id: 'm49', text: 'Pregunta si huele a quemado.', category: 'Disimulo', points: 10, penalty: 'Tápate la nariz con dos dedos al hablar.', duration: '10 minutos' },
+  { id: 'm50', text: 'Canta el estribillo de una canción antigua de la nada.', category: 'Humor', points: 25, penalty: 'Habla solo susurrando.', duration: '15 minutos' }
 ];
 
 export const groupChallenges = [
@@ -53,6 +80,7 @@ export const storeActions = [
   { id: 'a7', text: 'Robar 1 reto a otro jugador.', desc: 'Le restas 1 reto completado a un rival en la carrera y te lo sumas.', price: 80, type: 'steal_reto', emoji: '🏃‍♂️' },
   { id: 'a8', text: 'Intercambiar cantidad de retos con otro.', desc: 'Cambia todos tus retos completados por los de otro jugador.', price: 120, type: 'swap_retos', emoji: '🎭' },
   { id: 'a9', text: 'Comprar 1 punto de reto.', desc: 'Avanza 1 casilla en la carrera de retos mágicamente.', price: 50, type: 'buy_reto', emoji: '⭐' },
+  { id: 'a10', text: 'Aplicar castigo a otro jugador', desc: 'Selecciona una víctima y métele un castigo aleatorio.', price: 40, type: 'curse_player', emoji: '⚡' },
 ];
 
 export const teamChallenges = [
