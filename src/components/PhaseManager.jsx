@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { storeActions, groupChallenges, getMultipleRandomMissions, getRandomMission } from '../data/missions';
-import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent, setGlobalTrap, clearGlobalTrap } from '../firebase';
+import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent, setGlobalTrap, clearGlobalTrap, setGlobalCheckpoint, setGameOver } from '../firebase';
 
 // Helper to format remaining time
 const formatTime = (ms) => {
@@ -29,6 +29,34 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
   // Timer state for curses
   const [now, setNow] = useState(Date.now());
+  const [timeLeft, setTimeLeft] = useState('');
+
+  // Target time (00:15 of the next occurrence)
+  useEffect(() => {
+    const target = new Date();
+    target.setHours(0, 15, 0, 0);
+    if (new Date() > target) {
+      target.setDate(target.getDate() + 1);
+    }
+
+    const timer = setInterval(() => {
+      const current = new Date();
+      const diff = target - current;
+      if (diff <= 0) {
+        setTimeLeft('00:00:00');
+        if (gameState && !gameState.isGameOver) {
+          setGameOver(true);
+        }
+      } else {
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+        setTimeLeft(`${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [gameState]);
 
   useEffect(() => {
     // Sync name to global state properly
@@ -94,6 +122,23 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     setIsFlipped(false);
   };
 
+  const checkCheckpoints = (newRetos) => {
+    if (!gameState || !gameState.globalCheckpoints) return;
+    const checkpoints = [5, 10, 15];
+    checkpoints.forEach(cp => {
+      if (newRetos >= cp && !gameState.globalCheckpoints[cp.toString()]) {
+        setGlobalCheckpoint(cp.toString());
+        triggerGroupEvent({
+          type: 'Batalla de Equipos 2vs2',
+          text: `¡Alguien ha llegado a los ${cp} retos! Elegid parejas y jugad una batalla. El equipo ganador se lleva el premio.`,
+          duration: 'Decisión del Admin',
+          reward: 2,
+          emoji: '⚔️'
+        });
+      }
+    });
+  };
+
   const handleComplete = () => {
     const myData = getMyData();
     const currentMission = myData.missions[currentMissionIndex];
@@ -112,12 +157,15 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     }
 
     const reward = currentMission.points || 15;
+    const newRetos = (myData.scores.retos_completados || 0) + 1;
     
     saveGameState(gender, {
       monedas: (myData.scores.monedas || 0) + reward,
-      retos_completados: (myData.scores.retos_completados || 0) + 1
+      retos_completados: newRetos
     });
     
+    checkCheckpoints(newRetos);
+
     confetti({
       particleCount: 150,
       spread: 80,
@@ -203,6 +251,10 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         }
       } else if (action.type === 'secret_bomb') {
         setGlobalTrap({ type: 'secret_bomb', setter: gender });
+      } else if (action.type === 'buy_reto') {
+        const newRetos = (myData.scores.retos_completados || 0) + 1;
+        saveGameState(gender, { retos_completados: newRetos });
+        checkCheckpoints(newRetos);
       }
       
       saveGameState(gender, { monedas: myData.scores.monedas - action.price });
@@ -534,17 +586,24 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                 Monedas: <span style={{ color: '#d89e00' }}>{myData.scores.monedas || 0}</span> 🪙
               </div>
               {storeActions.map(action => (
-                <div key={action.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '15px', border: '1px solid #ddd', borderRadius: '4px', marginBottom: '10px', background: '#fff' }}>
-                  <div style={{ flex: 1, paddingRight: '15px', color: '#333' }}>
-                    <span style={{ fontSize: '1.2rem', marginRight: '8px' }}>{action.emoji}</span>
-                    <span style={{ fontWeight: 'bold' }}>{action.text}</span>
+                <div key={action.id} style={{ display: 'flex', flexDirection: 'column', padding: '15px', border: '1px solid #ddd', borderRadius: '4px', marginBottom: '10px', background: '#fff' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+                    <div style={{ flex: 1, paddingRight: '15px', color: '#333' }}>
+                      <span style={{ fontSize: '1.2rem', marginRight: '8px' }}>{action.emoji}</span>
+                      <span style={{ fontWeight: 'bold' }}>{action.text}</span>
+                    </div>
+                    <button 
+                      onClick={() => buyAction(action)}
+                      style={{ background: '#d89e00', color: '#fff', border: 'none', padding: '10px 15px', borderRadius: '4px', fontWeight: '900', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: '4px solid #b38200' }}
+                    >
+                      {action.price} 🪙
+                    </button>
                   </div>
-                  <button 
-                    onClick={() => buyAction(action)}
-                    style={{ background: '#d89e00', color: '#fff', border: 'none', padding: '10px 15px', borderRadius: '4px', fontWeight: '900', cursor: 'pointer', whiteSpace: 'nowrap', borderBottom: '4px solid #b38200' }}
-                  >
-                    {action.price} 🪙
-                  </button>
+                  {action.desc && (
+                    <div style={{ fontSize: '0.85rem', color: '#666', borderTop: '1px dashed #eee', paddingTop: '8px' }}>
+                      {action.desc}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -626,15 +685,24 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
         <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: '#222', display: 'flex', flexDirection: 'column', zIndex: 100 }}>
           {/* Header */}
           <div style={{ background: '#111', padding: '15px 20px', color: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '4px solid #333' }}>
-            <h3 style={{ margin: 0, fontWeight: '900', fontSize: '1.8rem', fontFamily: "'Fredoka', sans-serif" }}>🏁 CARRERA DE RETOS</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+              <h3 style={{ margin: 0, fontWeight: '900', fontSize: '1.8rem', fontFamily: "'Fredoka', sans-serif" }}>🏁 CARRERA</h3>
+              <div style={{ background: '#e21b3c', padding: '5px 10px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', fontFamily: 'monospace' }}>
+                ⏳ {timeLeft}
+              </div>
+            </div>
             <button onClick={() => setShowRace(false)} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff', fontSize: '2rem', cursor: 'pointer', width: '50px', height: '50px', borderRadius: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>×</button>
           </div>
           
           {/* Track Area */}
           <div style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'flex-end', padding: '40px 10px', position: 'relative', overflow: 'hidden' }}>
             
-            {/* Meta Line (Finish Line) */}
-            <div style={{ position: 'absolute', top: '15px', left: 0, width: '100%', height: '15px', background: 'transparent', borderTop: '15px dashed #fff', zIndex: 1 }}></div>
+            {/* Meta Line (Finish Line) & Checkpoints */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', bottom: '90%', width: '100%', borderTop: '4px dashed #FFD700', opacity: 0.8 }}><span style={{ position: 'absolute', top: '-25px', left: '10px', color: '#FFD700', fontWeight: 'bold' }}>META (15)</span></div>
+              <div style={{ position: 'absolute', bottom: '60%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 10</span></div>
+              <div style={{ position: 'absolute', bottom: '30%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 5</span></div>
+            </div>
             
             {/* Render each player as a vertical track */}
             {allPlayers.map(([id, pData], index) => {

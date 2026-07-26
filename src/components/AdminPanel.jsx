@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { listenToGameState, resetPlayer, resetAllPlayers, setGlobalUnlock, saveGameState, setGameOver, saveActiveCurses } from '../firebase';
+import { listenToGameState, resetPlayer, resetAllPlayers, setGlobalUnlock, saveGameState, setGameOver, saveActiveCurses, clearGroupEvent } from '../firebase';
 
 const AdminPanel = () => {
   const [gameState, setGameState] = useState(null);
@@ -45,6 +45,15 @@ const AdminPanel = () => {
               }}
               style={{ flex: 1, background: gameState.globalUnlock ? '#555' : '#26890c', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
               {gameState.globalUnlock ? 'Página Desbloqueada' : 'Fuerza Acceso Anticipado'}
+            </button>
+            <button 
+              onClick={() => {
+                if(window.confirm('¿Cerrar el evento global/batalla actual para todos?')) {
+                  clearGroupEvent();
+                }
+              }}
+              style={{ flex: 1, background: gameState.globalEvent ? '#e21b3c' : '#555', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', opacity: gameState.globalEvent ? 1 : 0.5 }}>
+              Cerrar Evento Activo
             </button>
               <button 
               onClick={() => {

@@ -29,6 +29,7 @@ const getLocalState = () => {
   });
   state.globalEvent = JSON.parse(localStorage.getItem('hh_global_event') || 'null');
   state.globalTrap = JSON.parse(localStorage.getItem('hh_global_trap') || 'null');
+  state.globalCheckpoints = JSON.parse(localStorage.getItem('hh_global_checkpoints') || '{"5": false, "10": false, "15": false}');
   return state;
 };
 
@@ -63,6 +64,11 @@ export const resetAllPlayers = () => {
   clearGlobalTrap();
   setGlobalUnlock(false);
   setGameOver(false);
+  
+  if (!usingLocalFallback) {
+    set(ref(database, 'v2/globalCheckpoints'), { "5": false, "10": false, "15": false }).catch(() => {});
+  }
+  localStorage.setItem('hh_global_checkpoints', JSON.stringify({ "5": false, "10": false, "15": false }));
 };
 
 export const setGlobalUnlock = (isUnlocked) => {
@@ -139,6 +145,16 @@ export const clearGlobalTrap = () => {
   window.dispatchEvent(new Event('storage'));
 };
 
+export const setGlobalCheckpoint = (level) => {
+  if (!usingLocalFallback) {
+    update(ref(database, 'v2/globalCheckpoints'), { [level]: true }).catch(() => {});
+  }
+  const current = JSON.parse(localStorage.getItem('hh_global_checkpoints') || '{"5": false, "10": false, "15": false}');
+  current[level] = true;
+  localStorage.setItem('hh_global_checkpoints', JSON.stringify(current));
+  window.dispatchEvent(new Event('storage'));
+};
+
 export const listenToGameState = (callback) => {
   let hasTriggered = false;
 
@@ -180,6 +196,7 @@ export const listenToGameState = (callback) => {
       players,
       globalEvent: data.globalEvent || null,
       globalTrap: data.globalTrap || null,
+      globalCheckpoints: data.globalCheckpoints || { "5": false, "10": false, "15": false },
       globalUnlock: data.globalUnlock || false,
       isGameOver: data.isGameOver || false
     });

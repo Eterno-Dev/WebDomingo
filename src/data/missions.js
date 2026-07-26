@@ -44,14 +44,15 @@ export const groupChallenges = [
 ];
 
 export const storeActions = [
-  { id: 'a1', text: 'Cambiar la misión actual.', price: 10, type: 'change_mission', emoji: '🔄' },
-  { id: 'a2', text: 'Saltarte una penalización activa.', price: 30, type: 'skip_penalty', emoji: '🛡️' },
-  { id: 'a3', text: 'Robar 10 monedas a otro jugador.', price: 20, type: 'steal_coins', emoji: '🥷' },
-  { id: 'a4', text: 'Comprar una misión extra.', price: 30, type: 'buy_mission', emoji: '🃏' },
-  { id: 'a5', text: 'Duplicar recompensa de tu misión.', price: 30, type: 'double_reward', emoji: 'x2' },
-  { id: 'a6', text: 'Bomba secreta (El siguiente pierde 2 retos).', price: 50, type: 'secret_bomb', emoji: '💣' },
-  { id: 'a7', text: 'Robar 1 reto a otro jugador.', price: 80, type: 'steal_reto', emoji: '🏃‍♂️' },
-  { id: 'a8', text: 'Intercambiar cantidad de retos con otro.', price: 120, type: 'swap_retos', emoji: '🎭' },
+  { id: 'a1', text: 'Cambiar la misión actual.', desc: 'La misión actual se intercambiará por otra aleatoria nueva.', price: 10, type: 'change_mission', emoji: '🔄' },
+  { id: 'a2', text: 'Saltarte una penalización activa.', desc: 'Selecciona una de tus penalizaciones actuales y descártala.', price: 30, type: 'skip_penalty', emoji: '🛡️' },
+  { id: 'a3', text: 'Robar 10 monedas a otro jugador.', desc: 'Elige a un rival. Le quitas 10 monedas y te las sumas.', price: 20, type: 'steal_coins', emoji: '🥷' },
+  { id: 'a4', text: 'Comprar una misión extra.', desc: 'Añade una misión más a tu mano para tener más opciones.', price: 30, type: 'buy_mission', emoji: '🃏' },
+  { id: 'a5', text: 'Duplicar recompensa de tu misión.', desc: 'La misión actual multiplicará permanentemente sus puntos por 2.', price: 30, type: 'double_reward', emoji: 'x2' },
+  { id: 'a6', text: 'Bomba secreta.', desc: 'La próxima persona que complete un reto perderá 2 puntos de reto.', price: 50, type: 'secret_bomb', emoji: '💣' },
+  { id: 'a7', text: 'Robar 1 reto a otro jugador.', desc: 'Le restas 1 reto completado a un rival en la carrera y te lo sumas.', price: 80, type: 'steal_reto', emoji: '🏃‍♂️' },
+  { id: 'a8', text: 'Intercambiar cantidad de retos con otro.', desc: 'Cambia todos tus retos completados por los de otro jugador.', price: 120, type: 'swap_retos', emoji: '🎭' },
+  { id: 'a9', text: 'Comprar 1 punto de reto.', desc: 'Avanza 1 casilla en la carrera de retos mágicamente.', price: 50, type: 'buy_reto', emoji: '⭐' },
 ];
 
 export const getRandomMission = () => {
