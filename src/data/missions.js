@@ -81,6 +81,7 @@ export const storeActions = [
   { id: 'a8', text: 'Intercambiar cantidad de retos con otro.', desc: 'Cambia todos tus retos completados por los de otro jugador.', price: 120, type: 'swap_retos', emoji: '🎭' },
   { id: 'a9', text: 'Comprar 1 punto de reto.', desc: 'Avanza 1 casilla en la carrera de retos mágicamente.', price: 50, type: 'buy_reto', emoji: '⭐' },
   { id: 'a10', text: 'Aplicar castigo a otro jugador', desc: 'Selecciona una víctima y métele un castigo aleatorio.', price: 40, type: 'curse_player', emoji: '⚡' },
+  { id: 'a11', text: 'Iniciar Evento Aleatorio', desc: 'Fuerza un evento. Si tu equipo gana, consigues el doble de recompensa.', price: 60, type: 'trigger_event', emoji: '⚔️' },
 ];
 
 export const teamChallenges = [

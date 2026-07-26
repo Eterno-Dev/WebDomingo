@@ -7,8 +7,12 @@ import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, li
 const formatTime = (ms) => {
   if (ms <= 0) return '00:00';
   const totalSeconds = Math.floor(ms / 1000);
-  const m = Math.floor(totalSeconds / 60);
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
   const s = totalSeconds % 60;
+  if (h > 0) {
+    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  }
   return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
 };
 
@@ -195,9 +199,12 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           // If I am on the winning team, I give myself the reward
           if (winningPlayers.includes(gender)) {
             const myData = gameState.players[gender];
+            const isBuyer = globalEvent.buyerBonus === gender;
+            const multiplier = isBuyer ? 2 : 1;
+            
             saveGameState(gender, {
-              retos_completados: (myData.scores.retos_completados || 0) + globalEvent.rewardRetos,
-              monedas: (myData.scores.monedas || 0) + globalEvent.rewardCoins
+              retos_completados: (myData.scores.retos_completados || 0) + (globalEvent.rewardRetos * multiplier),
+              monedas: (myData.scores.monedas || 0) + (globalEvent.rewardCoins * multiplier)
             });
             confetti({ particleCount: 200, spread: 90, origin: { y: 0.5 }, colors: ['#FFD700', '#fff'] });
           }
@@ -331,6 +338,31 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
       } else if (action.type === 'buy_reto') {
         const newRetos = (myData.scores.retos_completados || 0) + 1;
         saveGameState(gender, { retos_completados: newRetos });
+      } else if (action.type === 'trigger_event') {
+        const activePlayers = Object.keys(gameState.players).filter(id => gameState.players[id].name);
+        const shuffled = [...activePlayers].sort(() => 0.5 - Math.random());
+        const team1 = shuffled.slice(0, Math.ceil(shuffled.length / 2));
+        const team2 = shuffled.slice(Math.ceil(shuffled.length / 2));
+        
+        const randomChallenge = teamChallenges[Math.floor(Math.random() * teamChallenges.length)];
+        const rewardRetos = 1;
+        const rewardCoins = 20;
+
+        triggerGroupEvent({
+          type: 'Batalla de Equipos 2vs2',
+          text: randomChallenge,
+          duration: '¡Todos deben votar al acabar!',
+          rewardText: `+${rewardRetos} Reto${rewardRetos > 1 ? 's' : ''} y +${rewardCoins}🪙`,
+          rewardRetos,
+          rewardCoins,
+          emoji: '⚔️',
+          team1,
+          team2,
+          tieBreaker: Math.random() < 0.5 ? 'team1' : 'team2',
+          votes: {},
+          resolved: false,
+          buyerBonus: gender // The buyer gets double reward if they win
+        });
       }
       
       saveGameState(gender, { monedas: myData.scores.monedas - action.price });
