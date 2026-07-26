@@ -55,6 +55,17 @@ export const storeActions = [
   { id: 'a9', text: 'Comprar 1 punto de reto.', desc: 'Avanza 1 casilla en la carrera de retos mágicamente.', price: 50, type: 'buy_reto', emoji: '⭐' },
 ];
 
+export const teamChallenges = [
+  "A ver quién hace la mejor coreografía con la canción de Superestrella.",
+  "El equipo que consiga mantener el contacto visual más tiempo sin reírse.",
+  "Batalla de gallos: improvisad un rap de 30 segundos insultando amistosamente al otro equipo.",
+  "El equipo que haga la torre humana más creativa y aguante 10 segundos.",
+  "Carrera de caballitos (uno a caballito del otro) hasta tocar la puerta y volver.",
+  "El equipo que consiga meter más bolitas de papel en un vaso desde 2 metros en 1 minuto.",
+  "Batalla de mímica: representad una película de terror, el mejor acting gana.",
+  "El equipo que cuente el chiste más malo y consiga que el otro equipo se ría."
+];
+
 export const getRandomMission = () => {
   const randomIndex = Math.floor(Math.random() * secretMissions.length);
   return secretMissions[randomIndex];

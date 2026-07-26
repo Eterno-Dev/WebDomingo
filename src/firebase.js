@@ -129,6 +129,19 @@ export const clearGroupEvent = () => {
   window.dispatchEvent(new Event('storage'));
 };
 
+export const castGlobalVote = (cuniId, teamId) => {
+  if (!usingLocalFallback) {
+    update(ref(database, `v2/globalEvent/votes`), { [cuniId]: teamId }).catch(() => {});
+  }
+  const event = JSON.parse(localStorage.getItem('hh_global_event') || 'null');
+  if (event) {
+    if (!event.votes) event.votes = {};
+    event.votes[cuniId] = teamId;
+    localStorage.setItem('hh_global_event', JSON.stringify(event));
+    window.dispatchEvent(new Event('storage'));
+  }
+};
+
 export const setGlobalTrap = (trap) => {
   if (!usingLocalFallback) {
     set(ref(database, 'v2/globalTrap'), trap).catch(() => {});

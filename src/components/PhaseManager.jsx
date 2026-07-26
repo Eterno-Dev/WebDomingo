@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
-import { storeActions, groupChallenges, getMultipleRandomMissions, getRandomMission } from '../data/missions';
-import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent, setGlobalTrap, clearGlobalTrap, setGlobalCheckpoint, setGameOver } from '../firebase';
+import { storeActions, groupChallenges, getMultipleRandomMissions, getRandomMission, teamChallenges } from '../data/missions';
+import { saveGameState, savePlayerName, saveActiveMissions, saveActiveCurses, listenToGameState, triggerGroupEvent, clearGroupEvent, setGlobalTrap, clearGlobalTrap, setGlobalCheckpoint, setGameOver, castGlobalVote } from '../firebase';
 
 // Helper to format remaining time
 const formatTime = (ms) => {
@@ -128,16 +128,79 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     checkpoints.forEach(cp => {
       if (newRetos >= cp && !gameState.globalCheckpoints[cp.toString()]) {
         setGlobalCheckpoint(cp.toString());
+        
+        const activePlayers = Object.keys(gameState.players).filter(id => gameState.players[id].name);
+        const shuffled = [...activePlayers].sort(() => 0.5 - Math.random());
+        const team1 = shuffled.slice(0, Math.ceil(shuffled.length / 2));
+        const team2 = shuffled.slice(Math.ceil(shuffled.length / 2));
+        
+        const randomChallenge = teamChallenges[Math.floor(Math.random() * teamChallenges.length)];
+        const rewardRetos = cp === 5 ? 1 : (cp === 10 ? 2 : 3);
+        const rewardCoins = cp === 5 ? 20 : (cp === 10 ? 40 : 60);
+
         triggerGroupEvent({
           type: 'Batalla de Equipos 2vs2',
-          text: `¡Alguien ha llegado a los ${cp} retos! Elegid parejas y jugad una batalla. El equipo ganador se lleva el premio.`,
-          duration: 'Decisión del Admin',
-          reward: 2,
-          emoji: '⚔️'
+          text: randomChallenge,
+          duration: '¡Todos deben votar al acabar!',
+          rewardText: `+${rewardRetos} Reto${rewardRetos > 1 ? 's' : ''} y +${rewardCoins}🪙`,
+          rewardRetos,
+          rewardCoins,
+          emoji: '⚔️',
+          team1,
+          team2,
+          votes: {},
+          resolved: false
         });
       }
     });
   };
+
+  // Auto-resolve battle votes
+  useEffect(() => {
+    const globalEvent = gameState?.globalEvent;
+    if (globalEvent && globalEvent.type === 'Batalla de Equipos 2vs2' && !globalEvent.resolved) {
+      const activePlayersCount = Object.keys(gameState.players).filter(id => gameState.players[id].name).length;
+      const votes = globalEvent.votes || {};
+      const voteCount = Object.keys(votes).length;
+      
+      if (voteCount > 0 && voteCount >= activePlayersCount) {
+        // Count votes
+        let t1Votes = 0; let t2Votes = 0;
+        Object.values(votes).forEach(v => {
+          if (v === 'team1') t1Votes++;
+          if (v === 'team2') t2Votes++;
+        });
+
+        if (t1Votes !== t2Votes) {
+          const winningTeamId = t1Votes > t2Votes ? 'team1' : 'team2';
+          const winningPlayers = globalEvent[winningTeamId] || [];
+          
+          // Mark as resolved locally so we don't trigger multiple times
+          triggerGroupEvent({ ...globalEvent, resolved: true, winner: winningTeamId, t1Votes, t2Votes });
+          
+          // If I am on the winning team, I give myself the reward
+          if (winningPlayers.includes(gender)) {
+            const myData = gameState.players[gender];
+            saveGameState(gender, {
+              retos_completados: (myData.scores.retos_completados || 0) + globalEvent.rewardRetos,
+              monedas: (myData.scores.monedas || 0) + globalEvent.rewardCoins
+            });
+            confetti({ particleCount: 200, spread: 90, origin: { y: 0.5 }, colors: ['#FFD700', '#fff'] });
+          }
+
+          // Clear event after 5 seconds to show the result
+          if (gender === winningPlayers[0]) {
+            setTimeout(() => {
+              clearGroupEvent();
+            }, 5000);
+          }
+        } else {
+          // It's a tie, mark as tied and wait for admin
+          triggerGroupEvent({ ...globalEvent, resolved: true, tied: true, t1Votes, t2Votes });
+        }
+      }
+    }
+  }, [gameState, gender]);
 
   const handleComplete = () => {
     const myData = getMyData();
@@ -662,18 +725,104 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
       {/* GLOBAL EVENT MODAL */}
       {globalEvent && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: '#e21b3c', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 200, padding: '20px', textAlign: 'center' }}>
-          <div style={{ fontSize: '5rem', marginBottom: '20px' }}>{globalEvent.emoji}</div>
-          <h2 style={{ color: '#fff', fontSize: '3rem', marginBottom: '15px', textTransform: 'uppercase', fontWeight: '900' }}>{globalEvent.type}</h2>
-          <p style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '30px', maxWidth: '80%', fontWeight: 'bold' }}>{globalEvent.text}</p>
-          <div style={{ background: '#000', padding: '15px 30px', borderRadius: '4px', color: '#fff', fontSize: '1.5rem', marginBottom: '40px', fontWeight: '900' }}>
-            ⏳ Tiempo: {globalEvent.duration}
-          </div>
-          <div style={{ fontSize: '2rem', color: '#FFD700', fontWeight: '900', marginBottom: '40px' }}>
-            +{globalEvent.reward} 🪙
-          </div>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: '#e21b3c', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 200, padding: '20px', textAlign: 'center', overflowY: 'auto' }}>
+          
+          {globalEvent.type === 'Batalla de Equipos 2vs2' ? (
+            <div style={{ width: '100%', maxWidth: '500px' }}>
+              <div style={{ fontSize: '4rem', marginBottom: '10px' }}>{globalEvent.emoji}</div>
+              <h2 style={{ color: '#fff', fontSize: '2.5rem', marginBottom: '10px', textTransform: 'uppercase', fontWeight: '900' }}>BATALLA POR EQUIPOS</h2>
+              
+              <p style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '20px', fontWeight: 'bold', background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '8px' }}>
+                {globalEvent.text}
+              </p>
+              
+              <div style={{ fontSize: '1.5rem', color: '#FFD700', fontWeight: '900', marginBottom: '20px' }}>
+                Premio: {globalEvent.rewardText}
+              </div>
+
+              {globalEvent.resolved ? (
+                <div style={{ background: '#fff', padding: '20px', borderRadius: '12px', color: '#333' }}>
+                  {globalEvent.tied ? (
+                    <>
+                      <h3 style={{ fontSize: '2rem', color: '#e21b3c', margin: '0 0 10px 0', fontWeight: '900' }}>¡EMPATE!</h3>
+                      <p style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>Han quedado {globalEvent.t1Votes} a {globalEvent.t2Votes}.</p>
+                      <p style={{ color: '#666' }}>El administrador decidirá el ganador desde su panel.</p>
+                    </>
+                  ) : (
+                    <>
+                      <h3 style={{ fontSize: '2rem', color: '#26890c', margin: '0 0 10px 0', fontWeight: '900' }}>¡GANADORES!</h3>
+                      <p style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '10px' }}>
+                        EQUIPO {globalEvent.winner === 'team1' ? '1' : '2'}
+                      </p>
+                      <div style={{ display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                        {globalEvent[globalEvent.winner].map(id => (
+                          <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 15px', borderRadius: '20px', fontWeight: 'bold' }}>
+                            {gameState.players[id]?.name}
+                          </span>
+                        ))}
+                      </div>
+                      <p style={{ color: '#666', marginTop: '15px' }}>Volviendo al juego...</p>
+                    </>
+                  )}
+                </div>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                  <div style={{ background: '#fff', padding: '15px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>EQUIPO 1</h3>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      {globalEvent.team1?.map(id => (
+                        <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 10px', borderRadius: '4px', fontWeight: 'bold' }}>{gameState.players[id]?.name}</span>
+                      ))}
+                    </div>
+                    <button 
+                      onClick={() => castGlobalVote(gender, 'team1')}
+                      style={{ background: globalEvent.votes?.[gender] === 'team1' ? '#26890c' : '#eee', color: globalEvent.votes?.[gender] === 'team1' ? '#fff' : '#333', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer' }}
+                    >
+                      {globalEvent.votes?.[gender] === 'team1' ? '✓ Votado' : 'Votar Equipo 1'}
+                    </button>
+                    <span style={{ color: '#666', fontWeight: 'bold' }}>
+                      Votos actuales: {Object.values(globalEvent.votes || {}).filter(v => v === 'team1').length}
+                    </span>
+                  </div>
+
+                  <div style={{ fontSize: '2rem', color: '#fff', fontWeight: '900' }}>VS</div>
+
+                  <div style={{ background: '#fff', padding: '15px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>EQUIPO 2</h3>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                      {globalEvent.team2?.map(id => (
+                        <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 10px', borderRadius: '4px', fontWeight: 'bold' }}>{gameState.players[id]?.name}</span>
+                      ))}
+                    </div>
+                    <button 
+                      onClick={() => castGlobalVote(gender, 'team2')}
+                      style={{ background: globalEvent.votes?.[gender] === 'team2' ? '#26890c' : '#eee', color: globalEvent.votes?.[gender] === 'team2' ? '#fff' : '#333', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer' }}
+                    >
+                      {globalEvent.votes?.[gender] === 'team2' ? '✓ Votado' : 'Votar Equipo 2'}
+                    </button>
+                    <span style={{ color: '#666', fontWeight: 'bold' }}>
+                      Votos actuales: {Object.values(globalEvent.votes || {}).filter(v => v === 'team2').length}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <div style={{ fontSize: '5rem', marginBottom: '20px' }}>{globalEvent.emoji}</div>
+              <h2 style={{ color: '#fff', fontSize: '3rem', marginBottom: '15px', textTransform: 'uppercase', fontWeight: '900' }}>{globalEvent.type}</h2>
+              <p style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '30px', maxWidth: '80%', fontWeight: 'bold' }}>{globalEvent.text}</p>
+              <div style={{ background: '#000', padding: '15px 30px', borderRadius: '4px', color: '#fff', fontSize: '1.5rem', marginBottom: '40px', fontWeight: '900' }}>
+                ⏳ Tiempo: {globalEvent.duration}
+              </div>
+              <div style={{ fontSize: '2rem', color: '#FFD700', fontWeight: '900', marginBottom: '40px' }}>
+                +{globalEvent.reward} 🪙
+              </div>
+            </>
+          )}
+
           {isDebugMode && (
-             <button onClick={() => clearGroupEvent()} style={{ background: '#fff', color: '#e21b3c', border: 'none', padding: '15px 30px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', cursor: 'pointer' }}>
+             <button onClick={() => clearGroupEvent()} style={{ background: '#fff', color: '#e21b3c', border: 'none', padding: '15px 30px', borderRadius: '4px', fontWeight: '900', fontSize: '1.2rem', cursor: 'pointer', marginTop: '20px' }}>
                Cerrar Evento (Admin)
              </button>
           )}

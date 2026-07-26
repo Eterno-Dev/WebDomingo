@@ -19,6 +19,26 @@ const AdminPanel = () => {
 
   const allPlayers = Object.entries(gameState.players);
 
+  const resolveBattleTie = (winningTeamId) => {
+    const globalEvent = gameState.globalEvent;
+    if (!globalEvent) return;
+    
+    const winningPlayers = globalEvent[winningTeamId] || [];
+    
+    winningPlayers.forEach(id => {
+      const pData = gameState.players[id];
+      if (pData) {
+        saveGameState(id, {
+          retos_completados: (pData.scores?.retos_completados || 0) + globalEvent.rewardRetos,
+          monedas: (pData.scores?.monedas || 0) + globalEvent.rewardCoins
+        });
+      }
+    });
+
+    clearGroupEvent();
+    alert(`¡Resuelto a favor del ${winningTeamId === 'team1' ? 'Equipo 1' : 'Equipo 2'}!`);
+  };
+
   return (
     <div className="screen-container" style={{ background: '#222', color: '#fff', overflowY: 'auto' }}>
       <div style={{ maxWidth: '600px', width: '100%', padding: '20px', margin: '0 auto' }}>
@@ -55,7 +75,7 @@ const AdminPanel = () => {
               style={{ flex: 1, background: gameState.globalEvent ? '#e21b3c' : '#555', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer', opacity: gameState.globalEvent ? 1 : 0.5 }}>
               Cerrar Evento Activo
             </button>
-              <button 
+            <button 
               onClick={() => {
                 if(window.confirm('¿Terminar el juego para TODOS y mostrar ganador?')) {
                   setGameOver(true);
@@ -74,6 +94,27 @@ const AdminPanel = () => {
               Reiniciar Partida Completa
             </button>
           </div>
+
+          {gameState.globalEvent?.type === 'Batalla de Equipos 2vs2' && (
+            <div style={{ marginTop: '20px', background: '#444', padding: '15px', borderRadius: '8px', border: '2px dashed #FFD700' }}>
+              <h3 style={{ margin: '0 0 10px 0', color: '#FFD700' }}>⚔️ Batalla Activa {gameState.globalEvent.tied ? '(¡EMPATE!)' : ''}</h3>
+              <p style={{ margin: '0 0 15px 0', fontSize: '0.9rem' }}>Fuerza un ganador para repartir automáticamente los premios y cerrar el evento.</p>
+              <div style={{ display: 'flex', gap: '10px' }}>
+                <button 
+                  onClick={() => resolveBattleTie('team1')}
+                  style={{ flex: 1, background: '#1368ce', color: '#fff', border: 'none', padding: '10px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  Ganar Equipo 1
+                </button>
+                <button 
+                  onClick={() => resolveBattleTie('team2')}
+                  style={{ flex: 1, background: '#d89e00', color: '#fff', border: 'none', padding: '10px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}
+                >
+                  Ganar Equipo 2
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div style={{ background: '#333', padding: '20px', borderRadius: '8px' }}>
