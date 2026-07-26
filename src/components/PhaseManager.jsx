@@ -407,6 +407,12 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
   const playerColor = getPlayerColor(gender);
 
+  const getTeamGradient = (teamIds) => {
+    if (!teamIds || teamIds.length === 0) return '#333';
+    if (teamIds.length === 1) return getPlayerColor(teamIds[0]);
+    return `linear-gradient(135deg, ${getPlayerColor(teamIds[0])} 0%, ${getPlayerColor(teamIds[1])} 100%)`;
+  };
+
   if (gameState.isGameOver) {
     const sortedPlayers = [...allPlayers].sort((a,b) => (b[1].scores?.retos_completados || 0) - (a[1].scores?.retos_completados || 0));
     const winner = sortedPlayers[0];
@@ -754,7 +760,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                   </h3>
                   
                   <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '15px' }}>
-                    {globalEvent[globalEvent.winner].map(id => (
+                    {globalEvent[globalEvent.winner]?.map(id => (
                       <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 15px', borderRadius: '20px', fontWeight: 'bold' }}>
                         {gameState.players[id]?.name}
                       </span>
@@ -763,42 +769,72 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                   <p style={{ color: '#666', marginTop: '20px', fontWeight: 'bold' }}>Volviendo a la carrera automáticamente...</p>
                 </div>
               ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                  <div style={{ background: '#fff', padding: '15px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>EQUIPO 1</h3>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
+                  {/* TEAM 1 CARD */}
+                  <div style={{ background: getTeamGradient(globalEvent.team1), padding: '20px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', border: '2px solid rgba(255,255,255,0.2)' }}>
+                    <h3 style={{ margin: 0, color: '#fff', fontSize: '1.5rem', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>EQUIPO 1</h3>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                       {globalEvent.team1?.map(id => (
-                        <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 10px', borderRadius: '4px', fontWeight: 'bold' }}>{gameState.players[id]?.name}</span>
+                        <span key={id} style={{ background: 'rgba(255,255,255,0.25)', color: '#fff', padding: '8px 16px', borderRadius: '20px', fontWeight: '900', fontSize: '1.2rem', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.5)' }}>
+                          {gameState.players[id]?.name || '???'}
+                        </span>
                       ))}
                     </div>
                     <button 
                       onClick={() => castGlobalVote(gender, 'team1')}
-                      style={{ background: globalEvent.votes?.[gender] === 'team1' ? '#26890c' : '#eee', color: globalEvent.votes?.[gender] === 'team1' ? '#fff' : '#333', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer' }}
+                      style={{ 
+                        background: globalEvent.votes?.[gender] === 'team1' ? '#fff' : 'rgba(0,0,0,0.4)', 
+                        color: globalEvent.votes?.[gender] === 'team1' ? '#333' : '#fff', 
+                        border: '2px solid #fff', 
+                        padding: '15px', 
+                        borderRadius: '8px', 
+                        fontWeight: '900', 
+                        fontSize: '1.2rem', 
+                        cursor: 'pointer',
+                        textTransform: 'uppercase',
+                        boxShadow: globalEvent.votes?.[gender] === 'team1' ? '0 0 15px #fff' : 'none',
+                        transition: 'all 0.2s ease'
+                      }}
                     >
-                      {globalEvent.votes?.[gender] === 'team1' ? '✓ Votado' : 'Votar Equipo 1'}
+                      {globalEvent.votes?.[gender] === 'team1' ? '✓ TU VOTO' : 'VOTAR EQUIPO 1'}
                     </button>
-                    <span style={{ color: '#666', fontWeight: 'bold' }}>
-                      Votos actuales: {Object.values(globalEvent.votes || {}).filter(v => v === 'team1').length}
+                    <span style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                      Votos recibidos: {Object.values(globalEvent.votes || {}).filter(v => v === 'team1').length}
                     </span>
                   </div>
 
-                  <div style={{ fontSize: '2rem', color: '#fff', fontWeight: '900' }}>VS</div>
+                  <div style={{ fontSize: '2.5rem', color: '#fff', fontWeight: '900', textShadow: '0 4px 10px rgba(0,0,0,0.5)' }}>VS</div>
 
-                  <div style={{ background: '#fff', padding: '15px', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <h3 style={{ margin: 0, color: '#333', fontSize: '1.2rem' }}>EQUIPO 2</h3>
+                  {/* TEAM 2 CARD */}
+                  <div style={{ background: getTeamGradient(globalEvent.team2), padding: '20px', borderRadius: '12px', display: 'flex', flexDirection: 'column', gap: '15px', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', border: '2px solid rgba(255,255,255,0.2)' }}>
+                    <h3 style={{ margin: 0, color: '#fff', fontSize: '1.5rem', fontWeight: '900', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>EQUIPO 2</h3>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                       {globalEvent.team2?.map(id => (
-                        <span key={id} style={{ background: getPlayerColor(id), color: '#fff', padding: '5px 10px', borderRadius: '4px', fontWeight: 'bold' }}>{gameState.players[id]?.name}</span>
+                        <span key={id} style={{ background: 'rgba(255,255,255,0.25)', color: '#fff', padding: '8px 16px', borderRadius: '20px', fontWeight: '900', fontSize: '1.2rem', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.5)' }}>
+                          {gameState.players[id]?.name || '???'}
+                        </span>
                       ))}
                     </div>
                     <button 
                       onClick={() => castGlobalVote(gender, 'team2')}
-                      style={{ background: globalEvent.votes?.[gender] === 'team2' ? '#26890c' : '#eee', color: globalEvent.votes?.[gender] === 'team2' ? '#fff' : '#333', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', fontSize: '1.2rem', cursor: 'pointer' }}
+                      style={{ 
+                        background: globalEvent.votes?.[gender] === 'team2' ? '#fff' : 'rgba(0,0,0,0.4)', 
+                        color: globalEvent.votes?.[gender] === 'team2' ? '#333' : '#fff', 
+                        border: '2px solid #fff', 
+                        padding: '15px', 
+                        borderRadius: '8px', 
+                        fontWeight: '900', 
+                        fontSize: '1.2rem', 
+                        cursor: 'pointer',
+                        textTransform: 'uppercase',
+                        boxShadow: globalEvent.votes?.[gender] === 'team2' ? '0 0 15px #fff' : 'none',
+                        transition: 'all 0.2s ease'
+                      }}
                     >
-                      {globalEvent.votes?.[gender] === 'team2' ? '✓ Votado' : 'Votar Equipo 2'}
+                      {globalEvent.votes?.[gender] === 'team2' ? '✓ TU VOTO' : 'VOTAR EQUIPO 2'}
                     </button>
-                    <span style={{ color: '#666', fontWeight: 'bold' }}>
-                      Votos actuales: {Object.values(globalEvent.votes || {}).filter(v => v === 'team2').length}
+                    <span style={{ color: 'rgba(255,255,255,0.8)', fontWeight: 'bold', fontSize: '0.9rem' }}>
+                      Votos recibidos: {Object.values(globalEvent.votes || {}).filter(v => v === 'team2').length}
                     </span>
                   </div>
                 </div>
