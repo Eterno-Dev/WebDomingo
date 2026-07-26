@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { listenToGameState, resetPlayer, resetAllPlayers, setGlobalUnlock, saveGameState } from '../firebase';
+import { listenToGameState, resetPlayer, resetAllPlayers, setGlobalUnlock, saveGameState, setGameOver, saveActiveCurses } from '../firebase';
 
 const AdminPanel = () => {
   const [gameState, setGameState] = useState(null);
@@ -46,14 +46,14 @@ const AdminPanel = () => {
               style={{ flex: 1, background: gameState.globalUnlock ? '#555' : '#26890c', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
               {gameState.globalUnlock ? 'Página Desbloqueada' : 'Fuerza Acceso Anticipado'}
             </button>
-            <button 
+              <button 
               onClick={() => {
                 if(window.confirm('¿Terminar el juego para TODOS y mostrar ganador?')) {
                   setGameOver(true);
                 }
               }}
               style={{ flex: 1, background: gameState.isGameOver ? '#555' : '#d89e00', color: '#fff', border: 'none', padding: '15px', borderRadius: '4px', fontWeight: 'bold', cursor: 'pointer' }}>
-              {gameState.isGameOver ? 'Juego Terminado' : 'Finalizar Juego'}
+              {gameState.isGameOver ? 'Juego Terminado' : 'Simular Fin de Partida'}
             </button>
             <button 
               onClick={() => {
@@ -77,7 +77,7 @@ const AdminPanel = () => {
                 <div key={id} style={{ background: '#444', padding: '15px', borderRadius: '8px', display: 'flex', flexWrap: 'wrap', gap: '15px', alignItems: 'center', opacity: isActive ? 1 : 0.5 }}>
                   <div style={{ flex: '1 1 100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ fontSize: '1.2rem', fontWeight: '900', color: getPlayerColor(id) }}>
-                      {pData.name || 'Esperando...'} ({id})
+                      {pData.name || 'Esperando...'}
                     </div>
                     {isActive && (
                       <button 
@@ -108,8 +108,22 @@ const AdminPanel = () => {
 
                       <div style={{ display: 'flex', gap: '10px', alignItems: 'center', background: '#222', padding: '10px', borderRadius: '4px' }}>
                         <span style={{ fontSize: '1.2rem', minWidth: '60px' }}>💀 {pData.scores?.penalizaciones || 0}</span>
-                        <button onClick={() => saveGameState(id, { penalizaciones: Math.max(0, (pData.scores?.penalizaciones || 0) - 1) })} style={{ flex: 1, padding: '8px', background: '#e21b3c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>- 1</button>
-                        <button onClick={() => saveGameState(id, { penalizaciones: (pData.scores?.penalizaciones || 0) + 1 })} style={{ flex: 1, padding: '8px', background: '#26890c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ 1</button>
+                        <button onClick={() => {
+                          const currentPenalizaciones = pData.scores?.penalizaciones || 0;
+                          if (currentPenalizaciones > 0) {
+                            saveGameState(id, { penalizaciones: currentPenalizaciones - 1 });
+                            const currentCurses = pData.curses || [];
+                            if (currentCurses.length > 0) {
+                              saveActiveCurses(id, currentCurses.slice(0, -1));
+                            }
+                          }
+                        }} style={{ flex: 1, padding: '8px', background: '#e21b3c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>- 1</button>
+                        <button onClick={() => {
+                          const currentPenalizaciones = pData.scores?.penalizaciones || 0;
+                          saveGameState(id, { penalizaciones: currentPenalizaciones + 1 });
+                          const currentCurses = pData.curses || [];
+                          saveActiveCurses(id, [...currentCurses, { id: Date.now(), text: "Castigo sorpresa del Admin 💀", expiresAt: Date.now() + 600000 }]);
+                        }} style={{ flex: 1, padding: '8px', background: '#26890c', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}>+ 1</button>
                       </div>
                     </div>
                   )}

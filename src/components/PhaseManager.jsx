@@ -491,13 +491,13 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           <div style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'flex-end', padding: '40px 10px', position: 'relative', overflow: 'hidden' }}>
             
             {/* Meta Line (Finish Line) */}
-            <div style={{ position: 'absolute', top: '40px', left: 0, width: '100%', height: '15px', background: 'transparent', borderTop: '15px dashed #fff', zIndex: 1 }}></div>
+            <div style={{ position: 'absolute', top: '15px', left: 0, width: '100%', height: '15px', background: 'transparent', borderTop: '15px dashed #fff', zIndex: 1 }}></div>
             
             {/* Render each player as a vertical track */}
             {allPlayers.map(([id, pData], index) => {
               const retos = pData.scores?.retos_completados || 0;
-              // Cap progress at 15 for max height (100%)
-              const progressPercentage = Math.min((retos / 15) * 100, 100); 
+              // Cap progress at 15 for max height (90% so it doesn't cross the finish line visually)
+              const progressPercentage = Math.min((retos / 15) * 90, 90); 
               
               return (
                 <div key={id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '22%', zIndex: 2 }}>
