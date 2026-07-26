@@ -59,7 +59,21 @@ export const secretMissions = [
   { id: 'm47', text: 'Haz que dos personas choquen sus vasos.', category: 'Interacción', points: 20, penalty: 'Bebe un trago de agua cada vez que alguien diga tu nombre.', duration: '30 minutos' },
   { id: 'm48', text: 'Dobla una servilleta en un origami rápido.', category: 'Creatividad', points: 15, penalty: 'Habla con voz de Mickey Mouse.', duration: '5 minutos' },
   { id: 'm49', text: 'Pregunta si huele a quemado.', category: 'Disimulo', points: 10, penalty: 'Tápate la nariz con dos dedos al hablar.', duration: '10 minutos' },
-  { id: 'm50', text: 'Canta el estribillo de una canción antigua de la nada.', category: 'Humor', points: 25, penalty: 'Habla solo susurrando.', duration: '15 minutos' }
+  { id: 'm50', text: 'Canta el estribillo de una canción antigua de la nada.', category: 'Humor', points: 25, penalty: 'Habla solo susurrando.', duration: '15 minutos' },
+
+  // Nuevas Misiones - Tanda 3
+  { id: 'm51', text: 'Inventa una excusa falsa para mirar debajo de la mesa.', category: 'Disimulo', points: 15, penalty: 'Debes hablar como si estuvieras masticando algo enorme.', duration: '15 minutos' },
+  { id: 'm52', text: 'Hazle una rima a alguien sin que se dé cuenta.', category: 'Creatividad', points: 20, penalty: 'Habla siempre en tono de interrogación.', duration: '10 minutos' },
+  { id: 'm53', text: 'Intenta chocar los cinco, y cuando te respondan, apártala (¡te engañé!).', category: 'Interacción', points: 25, penalty: 'Tienes que mantener un ojo cerrado como un pirata.', duration: '20 minutos' },
+  { id: 'm54', text: 'Di que te duele mucho el codo izquierdo de la nada.', category: 'Conversación', points: 15, penalty: 'Mantén las manos en los bolsillos todo el tiempo.', duration: '30 minutos' },
+  { id: 'm55', text: 'Haz un estiramiento exagerado de brazos y piernas en medio del grupo.', category: 'Disimulo', points: 20, penalty: 'Tienes que estar sentado en el suelo, no en silla.', duration: '15 minutos' },
+  { id: 'm56', text: 'Habla del clima como si fuera la noticia del siglo.', category: 'Humor', points: 15, penalty: 'Acaba todas tus frases suspirando exageradamente.', duration: '10 minutos' },
+  { id: 'm57', text: 'Finge tener un calambre en el pie.', category: 'Interacción', points: 25, penalty: 'Da dos saltitos cada vez que te levantes.', duration: '30 minutos' },
+  { id: 'm58', text: 'Pregúntale a alguien si sabe qué hora es en Japón.', category: 'Conversación', points: 10, penalty: 'Habla con voz muy, muy aguda.', duration: '5 minutos' },
+  { id: 'm59', text: 'Haz que te pasen la sal o el agua y agradécelo haciendo una reverencia.', category: 'Creatividad', points: 20, penalty: 'Solo puedes hablar usando palabras sin "E".', duration: '5 minutos' },
+  { id: 'm60', text: 'Dile a alguien que tiene algo en el pelo y haz que se lo quite.', category: 'Disimulo', points: 30, penalty: 'Ponte la ropa del revés o con la etiqueta por fuera.', duration: '30 minutos' },
+  { id: 'm61', text: 'Ríe histéricamente de algo que no tiene gracia.', category: 'Humor', points: 25, penalty: 'Cruza los dedos de las manos siempre que hables.', duration: '15 minutos' },
+  { id: 'm62', text: 'Llama a alguien por un nombre de un famoso (ej. "¡Oye, Brad Pitt!").', category: 'Interacción', points: 15, penalty: 'Tienes que actuar como si estuvieras siendo entrevistado.', duration: '20 minutos' }
 ];
 
 export const groupChallenges = [
@@ -81,7 +95,7 @@ export const storeActions = [
   { id: 'a8', text: 'Intercambiar cantidad de retos con otro.', desc: 'Cambia todos tus retos completados por los de otro jugador.', price: 120, type: 'swap_retos', emoji: '🎭' },
   { id: 'a9', text: 'Comprar 1 punto de reto.', desc: 'Avanza 1 casilla en la carrera de retos mágicamente.', price: 50, type: 'buy_reto', emoji: '⭐' },
   { id: 'a10', text: 'Aplicar castigo a otro jugador', desc: 'Selecciona una víctima y métele un castigo aleatorio.', price: 40, type: 'curse_player', emoji: '⚡' },
-  { id: 'a11', text: 'Iniciar Evento Aleatorio', desc: 'Fuerza un evento. Si tu equipo gana, consigues el doble de recompensa.', price: 60, type: 'trigger_event', emoji: '⚔️' },
+  { id: 'a11', text: 'Iniciar Evento Aleatorio', desc: 'Fuerza un evento. Si tu equipo gana, consigues el doble de recompensa.', price: 40, type: 'trigger_event', emoji: '⚔️' },
 ];
 
 export const teamChallenges = [
@@ -92,7 +106,15 @@ export const teamChallenges = [
   "Carrera de caballitos (uno a caballito del otro) hasta tocar la puerta y volver.",
   "El equipo que consiga meter más bolitas de papel en un vaso desde 2 metros en 1 minuto.",
   "Batalla de mímica: representad una película de terror, el mejor acting gana.",
-  "El equipo que cuente el chiste más malo y consiga que el otro equipo se ría."
+  "El equipo que cuente el chiste más malo y consiga que el otro equipo se ría.",
+  "El equipo que consiga decir un trabalenguas sin equivocarse en menos tiempo.",
+  "A ver qué equipo consigue la pose más ridícula en modo estatua (15 segundos).",
+  "Piedra, papel o tijera gigante: tenéis que usar todo el cuerpo para representar el elemento.",
+  "El equipo que logre equilibrar un vaso de plástico en la cabeza de uno de ellos caminando en línea recta.",
+  "Batalla de miradas cruzadas: un jugador de cada equipo mirándose fijamente hasta que uno parpadee.",
+  "Adivina la canción: un jugador tararea y su compañero tiene que adivinarla antes que el otro equipo.",
+  "El primer equipo en encontrar y traer algo de color amarillo fosforito.",
+  "Pulso chino a ciegas: gana el equipo que venza en un pulso chino con los ojos cerrados."
 ];
 
 export const getRandomMission = () => {
