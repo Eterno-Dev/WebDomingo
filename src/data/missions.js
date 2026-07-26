@@ -100,15 +100,15 @@ export const storeActions = [
 
 export const teamChallenges = [
   "A ver quién hace la mejor coreografía con la canción de Superestrella.",
-  "Batalla de gallos: improvisad un rap insultando amistosamente al otro equipo.",
-  "Carrera de caballitos (uno a caballito del otro). El primero en llegar al objetivo establecido gana.",
-  "El equipo que consiga meter más bolitas de papel en un vaso desde 2 metros en 1 minuto.",
-  "Haceros pasar por un personaje famoso o de Disney: un jugador hace la voz estando escondido/de espaldas, y el otro actúa. El mejor dúo gana.",
-  "Debate absurdo: Escoged un tema ridículo (ej: ¿Es mejor sudar mayonesa o llorar kétchup?). Tenéis 2 minutos para defender vuestra postura apasionadamente.",
-  "Escena de telenovela: Tenéis 2 minutos para improvisar la escena de telenovela más dramática posible. Debe incluir una traición absurda y un desmayo.",
-  "El equipo que consiga construir la estructura más alta y estable usando objetos de la sala (zapatos, libros, cojines...) en 2 minutos.",
-  "Desfile de moda a ciegas: Un jugador cierra los ojos y su compañero tiene 1 minuto para disfrazarlo con lo que encuentre. Luego debe hacer un desfile épico.",
-  "El monstruo de dos cabezas: Los dos del equipo se abrazan por la cintura. Uno usa solo el brazo izquierdo y el otro el derecho. Deben preparar un vaso de agua y bebérselo como si fueran una sola persona."
+  "Batalla de gallos: improvisad un rap metiéndoos amistosamente con el otro equipo.",
+  "Carrera de caballitos (uno encima de otro). El primero en llegar al objetivo gana.",
+  "Meter más bolitas de papel en un vaso desde 2 metros de distancia (1 minuto).",
+  "Doblar película: Uno actúa y el otro hace la voz sin mirarle. El mejor dúo gana.",
+  "Debate absurdo: Tenéis 2 minutos para defender si es mejor sudar mayonesa o llorar kétchup.",
+  "Telenovela: Improvisad una escena súper dramática que incluya traición y desmayo.",
+  "Construid la torre más alta usando objetos aleatorios de la sala en solo 2 minutos.",
+  "Desfile a ciegas: Tienes 1 min para disfrazar a tu compañero (que tendrá los ojos cerrados).",
+  "Duelo de piropos: Haced el piropo más ridículo y elaborado al equipo rival sin reírse."
 ];
 
 export const getRandomMission = () => {

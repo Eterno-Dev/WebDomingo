@@ -218,7 +218,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     if (gameState?.globalEvent?.resolved) {
       const timer = setTimeout(() => {
         clearGroupEvent();
-      }, 7000);
+      }, 4000);
       return () => clearTimeout(timer);
     }
   }, [gameState?.globalEvent?.resolved]);
@@ -453,7 +453,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     setTimeout(() => {
       setPurchaseMessage(null);
       setShowStore(false);
-    }, 2000);
+    }, 1500);
   };
 
   const showError = (text) => {
@@ -461,7 +461,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
     setErrorMessage(text);
     setTimeout(() => {
       setErrorMessage(null);
-    }, 2000);
+    }, 1000);
   };
 
   if (!gameState) return <div style={{ color: '#fff', textAlign: 'center', marginTop: '50px' }}>Cargando...</div>;
