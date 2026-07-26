@@ -30,11 +30,16 @@ function Welcome({ onSelectGender }) {
       {step === 1 && (
         <div className="modal-overlay">
           <div className="modal-content" style={{ background: '#fff', color: '#333', border: 'none', borderRadius: '8px', zIndex: 20 }}>
+            {/* ALARM POPUP NOTICE */}
+            <div style={{ background: '#f5f5f5', color: '#333', padding: '15px', borderRadius: '8px', marginBottom: '20px', fontWeight: 'bold', fontSize: '1.1rem', border: '1px solid #ddd', textAlign: 'center' }}>
+              ¡Colócate una alarma a las 00:15!<br/>
+              <span style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>Vuelve a revisar la aplicación web cuando suene.</span>
+            </div>
+
             <h3 style={{ fontFamily: "'Fredoka', sans-serif", color: '#e21b3c', fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
             <div style={{ margin: '1.5rem 0', textAlign: 'center' }}>
               <p style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold' }}>
-                Realiza los retos y recibe castigos o premios.<br/><br/>
-                Colócate una alarma a las 00:15.<br/>
+                Realiza los retos y compite con tus rivales.<br/><br/>
                 Al acabar el tiempo la persona que haya completado más retos gana.
               </p>
             </div>

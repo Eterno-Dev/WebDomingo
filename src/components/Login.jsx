@@ -12,14 +12,15 @@ function Login({ onLogin }) {
 
     const frame = () => {
       confetti({
-        particleCount: 2,
+        particleCount: 1,
         angle: 270, // Straight down
-        spread: 90,
+        spread: 120,
         origin: { x: Math.random(), y: -0.1 },
         colors: ['#e21b3c', '#1368ce', '#d89e00', '#26890c'],
-        gravity: 0.5,
-        scalar: 0.8,
-        drift: Math.random() - 0.5
+        gravity: 0.2, // Much slower fall (like petals)
+        scalar: 0.7,
+        drift: (Math.random() - 0.5) * 2, // More horizontal drift
+        ticks: 400 // Last longer on screen
       });
 
       if (Date.now() < end) {
