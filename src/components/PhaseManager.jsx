@@ -189,17 +189,20 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
             });
             confetti({ particleCount: 200, spread: 90, origin: { y: 0.5 }, colors: ['#FFD700', '#fff'] });
           }
-
-          // Clear event after 7 seconds to show the result
-          if (gender === winningPlayers[0]) {
-            setTimeout(() => {
-              clearGroupEvent();
-            }, 7000);
-          }
         }
       }
     }
   }, [gameState, gender]);
+
+  // Auto-clear resolved events
+  useEffect(() => {
+    if (gameState?.globalEvent?.resolved) {
+      const timer = setTimeout(() => {
+        clearGroupEvent();
+      }, 7000);
+      return () => clearTimeout(timer);
+    }
+  }, [gameState?.globalEvent?.resolved]);
 
   const handleComplete = () => {
     const myData = getMyData();
@@ -724,17 +727,17 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
 
       {/* GLOBAL EVENT MODAL */}
       {globalEvent && (
-        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: '#e21b3c', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 200, padding: '20px', textAlign: 'center', overflowY: 'auto' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', background: '#f5f7fa', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', zIndex: 200, padding: '20px', textAlign: 'center', overflowY: 'auto' }}>
           
           {globalEvent.type === 'Batalla de Equipos 2vs2' ? (
             <div style={{ width: '100%', maxWidth: '500px' }}>
-              <h2 style={{ color: '#fff', fontSize: '2.5rem', marginBottom: '10px', textTransform: 'uppercase', fontWeight: '900' }}>BATALLA POR EQUIPOS</h2>
+              <h2 style={{ color: '#333', fontSize: '2.5rem', marginBottom: '10px', textTransform: 'uppercase', fontWeight: '900' }}>BATALLA POR EQUIPOS</h2>
               
-              <p style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '20px', fontWeight: 'bold', background: 'rgba(0,0,0,0.2)', padding: '15px', borderRadius: '8px' }}>
+              <p style={{ color: '#333', fontSize: '1.4rem', marginBottom: '20px', fontWeight: 'bold', background: '#fff', border: '1px solid #ddd', padding: '15px', borderRadius: '8px' }}>
                 {globalEvent.text}
               </p>
               
-              <div style={{ fontSize: '1.5rem', color: '#FFD700', fontWeight: '900', marginBottom: '20px' }}>
+              <div style={{ fontSize: '1.5rem', color: '#d89e00', fontWeight: '900', marginBottom: '20px' }}>
                 Premio: {globalEvent.rewardText}
               </div>
 
@@ -871,11 +874,11 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           <div style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'flex-end', padding: '40px 10px', position: 'relative', overflow: 'hidden' }}>
             
             {/* Meta Line (Finish Line) & Checkpoints */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', zIndex: 1, pointerEvents: 'none' }}>
-              <div style={{ position: 'absolute', bottom: '90%', width: '100%', borderTop: '4px dashed #FFD700', opacity: 0.8 }}><span style={{ position: 'absolute', top: '-25px', left: '10px', color: '#FFD700', fontWeight: 'bold' }}>META (15)</span></div>
-              <div style={{ position: 'absolute', bottom: '72%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 12</span></div>
-              <div style={{ position: 'absolute', bottom: '60%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 10</span></div>
-              <div style={{ position: 'absolute', bottom: '30%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold' }}>Nivel 5</span></div>
+            <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: '100%', zIndex: 10, pointerEvents: 'none' }}>
+              <div style={{ position: 'absolute', bottom: '90%', width: '100%', borderTop: '4px dashed #FFD700', opacity: 0.8 }}><span style={{ position: 'absolute', top: '-25px', left: '10px', color: '#FFD700', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>META</span></div>
+              <div style={{ position: 'absolute', bottom: '72%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>12</span></div>
+              <div style={{ position: 'absolute', bottom: '60%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>10</span></div>
+              <div style={{ position: 'absolute', bottom: '30%', width: '100%', borderTop: '2px dashed #fff', opacity: 0.5 }}><span style={{ position: 'absolute', top: '-20px', left: '10px', color: '#fff', fontWeight: 'bold', textShadow: '0 0 4px #000' }}>5</span></div>
             </div>
             
             {/* Render each player as a vertical track */}
