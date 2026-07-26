@@ -8,37 +8,6 @@ function Welcome({ onSelectGender }) {
   const [step, setStep] = useState(1); // 1 = Rules, 2 = Name, 3 = Color
   const [gameState, setGameState] = useState(null);
 
-  // Continuous Confetti effect
-  useEffect(() => {
-    const duration = 15 * 1000;
-    const end = Date.now() + duration;
-
-    const frame = () => {
-      confetti({
-        particleCount: 5,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0 },
-        colors: ['#e21b3c', '#1368ce', '#d89e00', '#26890c']
-      });
-      confetti({
-        particleCount: 5,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1 },
-        colors: ['#e21b3c', '#1368ce', '#d89e00', '#26890c']
-      });
-
-      if (Date.now() < end && step === 1) {
-        requestAnimationFrame(frame);
-      }
-    };
-
-    if (step === 1) {
-      frame();
-    }
-  }, [step]);
-
   useEffect(() => {
     listenToGameState((state) => {
       setGameState(state);
@@ -64,7 +33,9 @@ function Welcome({ onSelectGender }) {
             <h3 style={{ fontFamily: "'Fredoka', sans-serif", color: '#e21b3c', fontSize: '2.5rem', fontWeight: '900', marginBottom: '1rem' }}>REGLAS DE LA FIESTA</h3>
             <div style={{ margin: '1.5rem 0', textAlign: 'center' }}>
               <p style={{ fontSize: '1.4rem', color: '#333', fontWeight: 'bold' }}>
-                Realiza los retos y recibe castigos o premios.
+                Realiza los retos y recibe castigos o premios.<br/><br/>
+                Colócate una alarma a las 00:15.<br/>
+                Al acabar el tiempo la persona que haya completado más retos gana.
               </p>
             </div>
             <button className="btn btn-primary" onClick={() => setStep(2)} style={{ width: '100%', padding: '15px', fontFamily: "'Montserrat', sans-serif", fontSize: '1.2rem', fontWeight: 'bold' }}>

@@ -491,7 +491,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
           <div style={{ flex: 1, display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'flex-end', padding: '40px 10px', position: 'relative', overflow: 'hidden' }}>
             
             {/* Meta Line (Finish Line) */}
-            <div style={{ position: 'absolute', top: '40px', left: 0, width: '100%', height: '30px', background: 'repeating-linear-gradient(90deg, #fff 0, #fff 20px, #000 20px, #000 40px)', zIndex: 1, opacity: 0.8, boxShadow: '0 4px 10px rgba(0,0,0,0.5)' }}></div>
+            <div style={{ position: 'absolute', top: '40px', left: 0, width: '100%', height: '15px', background: 'transparent', borderTop: '15px dashed #fff', zIndex: 1 }}></div>
             
             {/* Render each player as a vertical track */}
             {allPlayers.map(([id, pData], index) => {
@@ -503,7 +503,7 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                 <div key={id} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', width: '22%', zIndex: 2 }}>
                   
                   {/* Track container */}
-                  <div style={{ flex: 1, width: '100%', maxWidth: '60px', background: '#333', borderRadius: '30px', position: 'relative', border: '3px solid #111', boxShadow: 'inset 0 0 10px rgba(0,0,0,0.8)' }}>
+                  <div style={{ flex: 1, width: '100%', maxWidth: '60px', background: 'rgba(255,255,255,0.2)', borderRadius: '30px', position: 'relative' }}>
                     
                     {/* Filled progress */}
                     <div style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', height: `${progressPercentage}%`, background: getPlayerColor(id), borderRadius: '30px', transition: 'height 1s cubic-bezier(0.34, 1.56, 0.64, 1)' }}></div>
@@ -525,7 +525,6 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                       color: '#fff',
                       fontWeight: '900',
                       fontSize: '1.5rem',
-                      boxShadow: '0 8px 16px rgba(0,0,0,0.6)',
                       zIndex: 3,
                       transition: 'bottom 1s cubic-bezier(0.34, 1.56, 0.64, 1)'
                     }}>
@@ -538,17 +537,16 @@ const PhaseManager = ({ gender, playerName, isDebugMode }) => {
                     marginTop: '20px',
                     color: '#fff', 
                     fontWeight: '900', 
-                    fontSize: '1rem', 
+                    fontSize: '0.9rem', 
                     background: getPlayerColor(id),
-                    padding: '8px 12px',
+                    padding: '8px 5px',
                     borderRadius: '8px',
                     textTransform: 'uppercase',
                     textAlign: 'center',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.3)',
                     maxWidth: '100%',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
+                    wordWrap: 'break-word',
+                    whiteSpace: 'normal',
+                    lineHeight: '1.1'
                   }}>
                     {pData.name}
                   </div>

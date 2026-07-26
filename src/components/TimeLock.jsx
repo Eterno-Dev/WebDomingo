@@ -55,8 +55,8 @@ function TimeLock({ onUnlock }) {
       <div style={{ textAlign: 'center', background: '#fff', color: '#333', padding: '30px 20px', borderRadius: '8px', boxShadow: '0 8px 16px rgba(0,0,0,0.3)', maxWidth: '400px', width: '100%' }}>
         
         {/* ALARM POPUP NOTICE */}
-        <div style={{ background: '#ffd700', color: '#333', padding: '15px', borderRadius: '8px', marginBottom: '20px', fontWeight: 'bold', fontSize: '1.1rem', border: '2px solid #d89e00', boxShadow: '0 4px 8px rgba(0,0,0,0.1)' }}>
-          ⏰ ¡Ponte una alarma para las 18:15h!<br/>
+        <div style={{ background: '#ffd700', color: '#333', padding: '15px', borderRadius: '8px', marginBottom: '20px', fontWeight: 'bold', fontSize: '1.1rem' }}>
+          ¡Ponte una alarma a las 18:15!<br/>
           <span style={{ fontSize: '0.9rem', fontWeight: 'normal' }}>Vuelve a entrar a la web cuando suene.</span>
         </div>
 

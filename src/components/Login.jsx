@@ -6,12 +6,27 @@ function Login({ onLogin }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Launch a bit of confetti on load
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
+    // Subtle falling petals
+    const duration = 15 * 1000;
+    const end = Date.now() + duration;
+
+    const frame = () => {
+      confetti({
+        particleCount: 2,
+        angle: 270, // Straight down
+        spread: 90,
+        origin: { x: Math.random(), y: -0.1 },
+        colors: ['#e21b3c', '#1368ce', '#d89e00', '#26890c'],
+        gravity: 0.5,
+        scalar: 0.8,
+        drift: Math.random() - 0.5
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
   }, []);
 
   const handleSubmit = (e) => {
@@ -29,8 +44,8 @@ function Login({ onLogin }) {
 
   return (
     <div className="screen-container" style={{ background: '#46178f', fontFamily: "'Inter', sans-serif" }}>
-      <h1 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '4.5rem', color: '#fff', fontWeight: '900', marginBottom: '2rem', textAlign: 'center', textShadow: '2px 4px 10px rgba(0,0,0,0.3)', padding: '0 20px' }}>
-        🎉 Los Cuñis! 🥂
+      <h1 style={{ fontFamily: "'Fredoka', sans-serif", fontSize: '4.5rem', color: '#fff', fontWeight: '900', marginBottom: '2rem', textAlign: 'center', textShadow: '2px 4px 10px rgba(0,0,0,0.3)', padding: '0 20px', zIndex: 10 }}>
+        Los Cuñis!
       </h1>
       <form onSubmit={handleSubmit} style={{ background: '#fff', padding: '30px', borderRadius: '4px', display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '350px', boxShadow: '0 4px 10px rgba(0,0,0,0.2)' }}>
         <input 
